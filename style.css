@@ -171,6 +171,10 @@ body {
   gap: 1.5rem;
 }
 
+#loja .grid-cards {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -231,9 +235,15 @@ body {
   border: 1px solid #44403c;
 }
 
-/* Sobre e Contato */
+.caixa-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+/* Institucional e Contato */
 .sobre-box {
-  max-width: 760px;
+  max-width: 780px;
 }
 
 .sobre-box p {
@@ -243,11 +253,15 @@ body {
 
 .secao-clara {
   background: #f3ede4;
+}
+
+.contato-box {
   text-align: center;
 }
 
 .contato-box h2 {
   font-size: 1.9rem;
+  color: var(--dark);
   margin-bottom: 0.5rem;
 }
 
