@@ -1,144 +1,499 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Joseph Medeiros | Lutheria, Instrumentos e Oficina</title>
-  <meta name="description" content="Lutheria, manutenção e restauração de instrumentos de cordas, venda de instrumentos e acessórios, fabricação artesanal de ferramentas e atendimento institucional em Belo Horizonte." />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header class="topo">
-    <div class="container nav-flex">
-      <a href="#" class="logo">Joseph Medeiros</a>
-      <nav class="menu">
-        <a href="#servicos">Atuação</a>
-        <a href="#lutheria">Lutheria</a>
-        <a href="#loja">Produtos e Oficina</a>
-        <a href="#institucional">Institucional</a>
-        <a href="#contato" class="btn-nav">Contato</a>
-      </nav>
-    </div>
-  </header>
+:root {
+  --bg-marfim: #f7f4ee;
+  --bg-marfim-claro: #fcfaf6;
+  --bg-areia: #efe9de;
+  --bg-noite: #121210;
+  --bg-noite-elevado: #1b1a17;
+  --texto-principal: #1c1b18;
+  --texto-secundario: #575249;
+  --texto-claro: #f5f1e8;
+  --texto-claro-suave: #c8bfa9;
+  --ouro: #c7a563;
+  --ouro-brilho: #d9ba7b;
+  --borda-clara: rgba(28, 27, 24, 0.12);
+  --borda-escura: rgba(199, 165, 99, 0.24);
+  --fonte-titulo: "Cormorant Garamond", Georgia, serif;
+  --fonte-corpo: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --raio: 10px;
+  --sombra-suave: 0 14px 36px rgba(18, 18, 16, 0.06);
+  --sombra-ouro: 0 18px 44px rgba(18, 18, 16, 0.28);
+}
 
-  <main>
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container hero-conteudo">
-        <span class="tag">Belo Horizonte • MG</span>
-        <h1>Precisão técnica e trabalho artesanal em cordas.</h1>
-        <p>
-          Serviços especializados de lutheria e manutenção, venda de instrumentos e acessórios selecionados, produção artesanal em oficina e atendimento a órgãos públicos e instituições.
-        </p>
-        <div class="hero-botoes">
-          <a href="https://wa.me/5531996255116?text=Ol%C3%A1%20Joseph,%20gostaria%20de%20solicitar%20um%20or%C3%A7amento." target="_blank" rel="noopener" class="btn btn-primario">Solicitar orçamento</a>
-          <a href="#servicos" class="btn btn-secundario">Ver frentes de atuação</a>
-        </div>
-      </div>
-    </section>
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    <!-- Frentes de Atuação -->
-    <section id="servicos" class="secao">
-      <div class="container">
-        <h2 class="titulo-secao">Frentes de Atuação</h2>
-        <div class="grid-cards">
-          <article class="card">
-            <h3>Lutheria e Manutenção</h3>
-            <p>Ajustes de alma, cavalete e cravelhas, troca de crina de arco, colagens, retoques e restauração para violinos, violas e violoncelos.</p>
-          </article>
+html {
+  scroll-behavior: smooth;
+}
 
-          <article class="card">
-            <h3>Instrumentos e Acessórios</h3>
-            <p>Comercialização de instrumentos revisados e regulados em oficina, além de arcos, encordoamentos, breus, espaleiras e itens de manutenção.</p>
-          </article>
+body {
+  font-family: var(--fonte-corpo);
+  background-color: var(--bg-marfim);
+  color: var(--texto-principal);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
 
-          <article class="card">
-            <h3>Oficina e Produção Própria</h3>
-            <p>Fabricação e ajuste de ferramentas e itens artesanais para lutheria — como raspilhas feitas sob medida — com foco em ergonomia e corte preciso.</p>
-          </article>
+img {
+  display: block;
+  max-width: 100%;
+}
 
-          <article class="card">
-            <h3>Licitações e Instituições</h3>
-            <p>Atendimento técnico e fornecimento para escolas de música, projetos culturais, orquestras e órgãos públicos com documentação regularizada.</p>
-          </article>
-        </div>
-      </div>
-    </section>
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-    <!-- Destaque Lutheria -->
-    <section id="lutheria" class="secao secao-escura">
-      <div class="container destaque-grid">
-        <div>
-          <span class="tag">Oficina em Belo Horizonte</span>
-          <h2>Regulagem e manutenção com critério de luthier</h2>
-          <p>
-            Cada instrumento é avaliado individualmente para entregar projeção, equilíbrio de timbre, resposta do arco e conforto na execução, seja para uso diário ou manutenção de acervos.
-          </p>
-          <ul class="lista-check">
-            <li>Troca de crina e revisão estrutural de arcos</li>
-            <li>Confecção e ajuste de cavaletes, almas e pestanas</li>
-            <li>Manutenção preventiva e corretiva de instrumentos</li>
-          </ul>
-        </div>
-        <div class="caixa-info">
-          <h3>Avaliação e Orçamento</h3>
-          <p>Envie fotos ou descreva o serviço ou produto desejado diretamente pelo WhatsApp.</p>
-          <a href="https://wa.me/5531996255116?text=Ol%C3%A1%20Joseph,%20gostaria%20de%20avaliar%20um%20servi%C3%A7o%20ou%20produto." target="_blank" rel="noopener" class="btn btn-primario btn-full">
-            Chamar no WhatsApp
-          </a>
-        </div>
-      </div>
-    </section>
+.container {
+  width: min(1140px, 90%);
+  margin-inline: auto;
+}
 
-    <!-- Loja de Produtos e Oficina -->
-    <section id="loja" class="secao">
-      <div class="container">
-        <h2 class="titulo-secao">Produtos e Bancada</h2>
-        <div class="grid-cards">
-          <article class="card">
-            <h3>Instrumentos Selecionados</h3>
-            <p>Violinos, violas e violoncelos revisados e regulados para estudo e atuação profissional, prontos para tocar.</p>
-          </article>
+/* Cabeçalho */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(18, 18, 16, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--borda-escura);
+}
 
-          <article class="card">
-            <h3>Acessórios e Consumíveis</h3>
-            <p>Encordoamentos, breus, crina para arco, espaleiras, estojos e componentes de reposição para manutenção contínua.</p>
-          </article>
+.nav-flex {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
 
-          <article class="card">
-            <h3>Ferramentas Artesanais</h3>
-            <p>Raspilhas e ferramentas preparadas na oficina a partir de chapa metálica, temperadas e afiadas para trabalho fino em madeira.</p>
-          </article>
-        </div>
-      </div>
-    </section>
+.logo-marca {
+  display: inline-flex;
+  align-items: center;
+}
 
-    <!-- Atendimento Institucional -->
-    <section id="institucional" class="secao secao-clara">
-      <div class="container sobre-box">
-        <h2 class="titulo-secao">Atendimento Institucional e Licitações</h2>
-        <p>
-          Estrutura preparada para participar de processos licitatórios e atender demandas institucionais envolvendo manutenção de instrumentos de cordas, laudos técnicos e fornecimento de materiais e equipamentos musicais em Belo Horizonte e região.
-        </p>
-      </div>
-    </section>
+.logo-img {
+  height: 54px;
+  width: auto;
+  object-fit: contain;
+}
 
-    <!-- Contato -->
-    <section id="contato" class="secao">
-      <div class="container contato-box">
-        <h2>Contato</h2>
-        <p>Atendimento com hora marcada em Belo Horizonte - MG.</p>
-        <div class="contato-links">
-          <a href="https://wa.me/5531996255116?text=Ol%C3%A1%20Joseph,%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener" class="btn btn-primario">WhatsApp (31) 99625-5116</a>
-        </div>
-      </div>
-    </section>
-  </main>
+.menu {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 26px;
+}
 
-  <footer class="rodape">
-    <div class="container">
-      <p>&copy; 2026 Joseph Medeiros. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-</body>
-</html>
+.menu a {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--texto-claro-suave);
+  letter-spacing: 0.02em;
+  transition: color 0.25s ease;
+}
+
+.menu a:hover {
+  color: var(--ouro-brilho);
+}
+
+.menu .btn-nav {
+  padding: 9px 18px;
+  border: 1px solid var(--ouro);
+  border-radius: 6px;
+  color: var(--ouro-brilho);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.menu .btn-nav:hover {
+  background-color: var(--ouro);
+  color: var(--bg-noite);
+}
+
+/* Hero */
+.hero {
+  background:
+    radial-gradient(circle at 82% 28%, rgba(199, 165, 99, 0.14), transparent 48%),
+    linear-gradient(165deg, var(--bg-noite) 0%, #171613 62%, #11110f 100%);
+  color: var(--texto-claro);
+  padding: 86px 0 92px;
+  border-bottom: 1px solid var(--borda-escura);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  align-items: center;
+  gap: 52px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ouro);
+  border-bottom: 1px solid rgba(199, 165, 99, 0.45);
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(2.5rem, 4.6vw, 3.85rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-bottom: 22px;
+}
+
+.hero-conteudo p {
+  font-size: 1.03rem;
+  color: var(--texto-claro-suave);
+  max-width: 58ch;
+  margin-bottom: 34px;
+}
+
+.hero-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.hero-emblema {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.moldura-logo {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4 / 5;
+  padding: 24px;
+  background: var(--bg-noite-elevado);
+  border: 1px solid var(--borda-escura);
+  border-radius: 14px;
+  box-shadow: var(--sombra-ouro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moldura-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.legenda-emblema {
+  margin-top: 16px;
+  max-width: 30ch;
+  font-family: var(--fonte-titulo);
+  font-style: italic;
+  font-size: 1.12rem;
+  color: var(--texto-claro-suave);
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 26px;
+  border-radius: 7px;
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primario {
+  background-color: var(--ouro);
+  color: var(--bg-noite);
+  border: 1px solid var(--ouro);
+}
+
+.btn-primario:hover {
+  background-color: var(--ouro-brilho);
+  border-color: var(--ouro-brilho);
+}
+
+.btn-secundario {
+  background-color: transparent;
+  color: var(--texto-claro);
+  border: 1px solid rgba(245, 241, 232, 0.28);
+}
+
+.btn-secundario:hover {
+  border-color: var(--ouro);
+  color: var(--ouro-brilho);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* Seções */
+.secao {
+  padding: 88px 0;
+}
+
+.secao-escura {
+  background: linear-gradient(180deg, var(--bg-noite) 0%, #171613 100%);
+  color: var(--texto-claro);
+  border-top: 1px solid var(--borda-escura);
+  border-bottom: 1px solid var(--borda-escura);
+}
+
+.secao-clara {
+  background-color: var(--bg-areia);
+  border-top: 1px solid var(--borda-clara);
+  border-bottom: 1px solid var(--borda-clara);
+}
+
+.cabecalho-secao {
+  margin-bottom: 44px;
+}
+
+.subtitulo-secao {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #9e7b37;
+  margin-bottom: 8px;
+}
+
+.secao-escura .subtitulo-secao {
+  color: var(--ouro);
+}
+
+.titulo-secao {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(2rem, 3.4vw, 2.85rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.intro-secao {
+  margin-top: 12px;
+  max-width: 62ch;
+  color: var(--texto-secundario);
+}
+
+/* Cards */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px;
+}
+
+.grid-tres {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  background-color: var(--bg-marfim-claro);
+  border: 1px solid var(--borda-clara);
+  border-top: 2px solid var(--ouro);
+  border-radius: var(--raio);
+  padding: 30px 28px;
+  box-shadow: var(--sombra-suave);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(18, 18, 16, 0.1);
+}
+
+.numero-card {
+  display: inline-block;
+  font-family: var(--fonte-titulo);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: #9e7b37;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  font-family: var(--fonte-titulo);
+  font-size: 1.55rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--texto-principal);
+}
+
+.card p {
+  font-size: 0.96rem;
+  color: var(--texto-secundario);
+}
+
+/* Destaque Lutheria */
+.destaque-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.destaque-grid h2 {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+
+.destaque-grid > div > p {
+  color: var(--texto-claro-suave);
+  margin-bottom: 24px;
+  max-width: 58ch;
+}
+
+.lista-check {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.lista-check li {
+  position: relative;
+  padding-left: 24px;
+  color: var(--texto-claro);
+  font-size: 0.98rem;
+}
+
+.lista-check li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ouro);
+  font-size: 0.85rem;
+}
+
+.caixa-info {
+  background-color: var(--bg-noite-elevado);
+  border: 1px solid var(--borda-escura);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--sombra-ouro);
+}
+
+.rotulo-caixa {
+  display: block;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ouro);
+  margin-bottom: 8px;
+}
+
+.caixa-info h3 {
+  font-family: var(--fonte-titulo);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.caixa-info p {
+  color: var(--texto-claro-suave);
+  margin-bottom: 24px;
+  font-size: 0.96rem;
+}
+
+/* Institucional e Contato */
+.sobre-box,
+.contato-box {
+  max-width: 740px;
+}
+
+.sobre-box p,
+.contato-box p {
+  color: var(--texto-secundario);
+  font-size: 1rem;
+}
+
+.contato-box h2 {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(2.1rem, 3.5vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.contato-links {
+  margin-top: 26px;
+}
+
+/* Rodapé */
+.rodape {
+  background-color: var(--bg-noite);
+  color: var(--texto-claro-suave);
+  border-top: 1px solid var(--borda-escura);
+  padding: 28px 0;
+  font-size: 0.88rem;
+}
+
+.rodape-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .hero-grid,
+  .destaque-grid,
+  .grid-tres {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-emblema {
+    order: -1;
+  }
+
+  .moldura-logo {
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav-flex {
+    flex-direction: column;
+    padding: 14px 0;
+    gap: 14px;
+  }
+
+  .menu {
+    justify-content: center;
+    gap: 14px 18px;
+  }
+
+  .hero {
+    padding: 64px 0 72px;
+  }
+
+  .secao {
+    padding: 68px 0;
+  }
+
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+}
