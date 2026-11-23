@@ -1,0 +1,39 @@
+name: Publicar Artigo Automático (Blog de Lutheria)
+
+on:
+  schedule:
+    # Terças e sextas às 12:00 UTC (09:00 BRT)
+    - cron: "0 12 * * 2,5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gerar-artigo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fazer checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Gerar artigo via Gemini API e atualizar índices
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/gerar-post.js
+
+      - name: Commitar e enviar alterações para o repositório
+        run: |
+          if git status --porcelain | grep -q .; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "chore(blog): publica novo artigo técnico de lutheria"
+            git push
+          else
+            echo "Nenhuma alteração pendente para commit."
+          fi
