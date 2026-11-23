@@ -11,8 +11,8 @@
   <link rel="canonical" href="https://www.josephmedeiros.com.br/" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="logo-joseph-medeiros.png" />
-  <link rel="apple-touch-icon" href="logo-joseph-medeiros.png" />
+  <link rel="icon" type="image/png" href="./logo-joseph-medeiros.png" />
+  <link rel="apple-touch-icon" href="./logo-joseph-medeiros.png" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:locale" content="pt_BR" />
@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css" />
 
   <!-- Dados Estruturados JSON-LD (SEO Local + GEO) -->
   <script type="application/ld+json">
@@ -50,6 +50,7 @@
         "description": "Oficina de lutheria em Belo Horizonte especializada em conserto, regulagem e restauração de violinos, violas, violoncelos e contrabaixos, troca de crina de arcos, fabricação artesanal de raspilhas temperadas e atendimento institucional via licitações.",
         "telephone": "+55-31-99625-5116",
         "priceRange": "$$",
+        "availableLanguage": ["Portuguese", "English", "Spanish", "French", "Italian", "German", "Russian"],
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Belo Horizonte",
@@ -177,31 +178,95 @@
           event_category: 'Contato',
           event_label: origem || 'whatsapp_geral'
         });
-        /* Descomente a linha abaixo e insira seu Rótulo de Conversão do Google Ads:
-        gtag('event', 'conversion', {
-          send_to: 'AW-XXXXXXXXXX/XXXXXXXXXXXXXXXXXXX',
-          event_callback: function() {}
-        });
-        */
       }
     }
   </script>
+  <script src="./i18n.js" defer></script>
 </head>
 <body>
   <header class="topo">
     <div class="container nav-flex">
       <a href="#" class="logo-marca" aria-label="Joseph Medeiros Luthier — Início">
-        <img src="logo-joseph-medeiros.png" alt="Logo Joseph Medeiros — Luthier, Conserto e Restauro" class="logo-img" />
+        <img src="./logo-joseph-medeiros.png" alt="Logo Joseph Medeiros — Luthier, Conserto e Restauro" class="logo-img" />
       </a>
-      <nav class="menu" aria-label="Navegação principal">
-        <a href="#servicos">Atuação</a>
-        <a href="#lutheria">Lutheria</a>
-        <a href="#loja">Produtos e Oficina</a>
-        <a href="#institucional">Institucional</a>
-        <a href="#faq">Dúvidas</a>
-        <a href="/blog/">Blog</a>
-        <a href="#contato" class="btn-nav">Contato</a>
-      </nav>
+
+      <div class="nav-direita">
+        <!-- Seletor de Idiomas com Bandeiras SVG Inline -->
+        <div class="seletor-idiomas" role="group" aria-label="Selecionar idioma / Select language">
+          <!-- Brasil (Português) -->
+          <button type="button" class="lang-btn ativo" data-lang="pt" title="Português (Brasil)" aria-label="Português (Brasil)" aria-pressed="true">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="28" height="20" rx="2" fill="#009c3b"/>
+              <polygon points="14,2.5 25.5,10 14,17.5 2.5,10" fill="#ffdf00"/>
+              <circle cx="14" cy="10" r="4.3" fill="#002776"/>
+              <path d="M9.9,9.2 Q14,7.8 18.2,10.5" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+            </svg>
+          </button>
+
+          <!-- Estados Unidos (Inglês) -->
+          <button type="button" class="lang-btn" data-lang="en" title="English (US)" aria-label="English (United States)" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="28" height="20" rx="2" fill="#b22234"/>
+              <path d="M0,2.8 H28 M0,6.2 H28 M0,9.6 H28 M0,13 H28 M0,16.4 H28" stroke="#ffffff" stroke-width="1.5"/>
+              <rect width="12.5" height="10.8" fill="#3c3b6e"/>
+            </svg>
+          </button>
+
+          <!-- Espanha (Espanhol) -->
+          <button type="button" class="lang-btn" data-lang="es" title="Español" aria-label="Español" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="28" height="20" rx="2" fill="#aa151b"/>
+              <rect y="5" width="28" height="10" fill="#f1bf00"/>
+            </svg>
+          </button>
+
+          <!-- França (Francês) -->
+          <button type="button" class="lang-btn" data-lang="fr" title="Français" aria-label="Français" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="9.34" height="20" fill="#002395"/>
+              <rect x="9.34" width="9.33" height="20" fill="#ffffff"/>
+              <rect x="18.67" width="9.33" height="20" fill="#ed2939"/>
+            </svg>
+          </button>
+
+          <!-- Itália (Italiano) -->
+          <button type="button" class="lang-btn" data-lang="it" title="Italiano" aria-label="Italiano" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="9.34" height="20" fill="#009246"/>
+              <rect x="9.34" width="9.33" height="20" fill="#ffffff"/>
+              <rect x="18.67" width="9.33" height="20" fill="#ce2b37"/>
+            </svg>
+          </button>
+
+          <!-- Alemanha (Alemão) -->
+          <button type="button" class="lang-btn" data-lang="de" title="Deutsch" aria-label="Deutsch" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="28" height="6.67" fill="#000000"/>
+              <rect y="6.67" width="28" height="6.67" fill="#dd0000"/>
+              <rect y="13.34" width="28" height="6.66" fill="#ffce00"/>
+            </svg>
+          </button>
+
+          <!-- Rússia (Russo — forte presença de músicos de orquestra em BH) -->
+          <button type="button" class="lang-btn" data-lang="ru" title="Русский" aria-label="Русский" aria-pressed="false">
+            <svg viewBox="0 0 28 20" width="22" height="16" aria-hidden="true">
+              <rect width="28" height="6.67" fill="#ffffff"/>
+              <rect y="6.67" width="28" height="6.67" fill="#0039a6"/>
+              <rect y="13.34" width="28" height="6.66" fill="#d52b1e"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="menu" aria-label="Navegação principal">
+          <a href="#servicos" data-i18n="nav_servicos">Atuação</a>
+          <a href="#lutheria" data-i18n="nav_lutheria">Lutheria</a>
+          <a href="#loja" data-i18n="nav_loja">Produtos e Oficina</a>
+          <a href="#institucional" data-i18n="nav_institucional">Institucional</a>
+          <a href="#faq" data-i18n="nav_faq">Dúvidas</a>
+          <a href="/blog/" data-i18n="nav_blog">Blog</a>
+          <a href="#contato" class="btn-nav" data-i18n="nav_contato">Contato</a>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -210,9 +275,9 @@
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-conteudo">
-          <span class="tag">Belo Horizonte • MG</span>
-          <h1>Luthier em Belo Horizonte: precisão técnica e trabalho artesanal em cordas.</h1>
-          <p>
+          <span class="tag" data-i18n="hero_tag">Belo Horizonte • MG</span>
+          <h1 data-i18n="hero_h1">Luthier em Belo Horizonte: precisão técnica e trabalho artesanal em cordas.</h1>
+          <p data-i18n="hero_p">
             Serviços especializados de lutheria, conserto e restauração de instrumentos de cordas, espaços preparados para seleção de instrumentos e acessórios, fabricação artesanal em oficina e atendimento a instituições.
           </p>
           <div class="hero-botoes">
@@ -221,17 +286,19 @@
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn-primario"
+              data-wa-key="hero"
+              data-i18n="hero_btn_orcamento"
               onclick="rastrearWhatsApp('hero_solicitar_orcamento')"
             >Solicitar orçamento</a>
-            <a href="#servicos" class="btn btn-secundario">Ver frentes de atuação</a>
+            <a href="#servicos" class="btn btn-secundario" data-i18n="hero_btn_frentes">Ver frentes de atuação</a>
           </div>
         </div>
 
         <aside class="hero-emblema" aria-hidden="true">
           <div class="moldura-logo">
-            <img src="logo-joseph-medeiros.png" alt="" />
+            <img src="./logo-joseph-medeiros.png" alt="" />
           </div>
-          <p class="legenda-emblema">Voluta, Serra do Curral e tradição de ateliê em Belo Horizonte.</p>
+          <p class="legenda-emblema" data-i18n="hero_legenda">Voluta, Serra do Curral e tradição de ateliê em Belo Horizonte.</p>
         </aside>
       </div>
     </section>
@@ -240,33 +307,33 @@
     <section id="servicos" class="secao">
       <div class="container">
         <div class="cabecalho-secao">
-          <span class="subtitulo-secao">Especialidades</span>
-          <h2 class="titulo-secao">Frentes de Atuação</h2>
+          <span class="subtitulo-secao" data-i18n="servicos_sub">Especialidades</span>
+          <h2 class="titulo-secao" data-i18n="servicos_titulo">Frentes de Atuação</h2>
         </div>
 
         <div class="grid-cards">
           <article class="card">
             <span class="numero-card">01</span>
-            <h3>Lutheria e Manutenção</h3>
-            <p>Ajustes de alma, cavalete (inclusive padrões franceses), pestanas e cravelhas, troca de crina de arco, plaina de espelho, colagens e restauração para violinos, violas, violoncelos e contrabaixos.</p>
+            <h3 data-i18n="card1_h3">Lutheria e Manutenção</h3>
+            <p data-i18n="card1_p">Ajustes de alma, cavalete (inclusive padrões franceses), pestanas e cravelhas, troca de crina de arco, plaina de espelho, colagens e restauração para violinos, violas, violoncelos e contrabaixos.</p>
           </article>
 
           <article class="card">
             <span class="numero-card">02</span>
-            <h3>Instrumentos e Acessórios</h3>
-            <p>Espaço estruturado para instrumentos revisados e regulados em oficina prontos para tocar, além de arcos, encordoamentos, breus, crina, espaleiras e estojos.</p>
+            <h3 data-i18n="card2_h3">Instrumentos e Acessórios</h3>
+            <p data-i18n="card2_p">Espaço estruturado para instrumentos revisados e regulados em oficina prontos para tocar, além de arcos, encordoamentos, breus, crina, espaleiras e estojos.</p>
           </article>
 
           <article class="card">
             <span class="numero-card">03</span>
-            <h3>Oficina e Produção Própria</h3>
-            <p>Fabricação artesanal e afiação de ferramentas para lutheria sob medida — como raspilhas preparadas a partir de chapa metálica temperada — com foco em ergonomia e corte preciso.</p>
+            <h3 data-i18n="card3_h3">Oficina e Produção Própria</h3>
+            <p data-i18n="card3_p">Fabricação artesanal e afiação de ferramentas para lutheria sob medida — como raspilhas preparadas a partir de chapa metálica temperada — com foco em ergonomia e corte preciso.</p>
           </article>
 
           <article class="card">
             <span class="numero-card">04</span>
-            <h3>Licitações e Instituições</h3>
-            <p>Atendimento técnico, laudos e fornecimento para escolas de música, projetos culturais, orquestras e órgãos públicos com documentação regularizada (ME / CNPJ ativo).</p>
+            <h3 data-i18n="card4_h3">Licitações e Instituições</h3>
+            <p data-i18n="card4_p">Atendimento técnico, laudos e fornecimento para escolas de música, projetos culturais, orquestras e órgãos públicos com documentação regularizada (ME / CNPJ ativo).</p>
           </article>
         </div>
       </div>
@@ -276,26 +343,28 @@
     <section id="lutheria" class="secao secao-escura">
       <div class="container destaque-grid">
         <div>
-          <span class="tag">Oficina em Belo Horizonte</span>
-          <h2>Regulagem e manutenção com critério de luthier</h2>
-          <p>
+          <span class="tag" data-i18n="lutheria_tag">Oficina em Belo Horizonte</span>
+          <h2 data-i18n="lutheria_h2">Regulagem e manutenção com critério de luthier</h2>
+          <p data-i18n="lutheria_p">
             Cada instrumento é avaliado individualmente — de estudantes iniciantes a músicos de orquestra — para entregar projeção, equilíbrio de timbre, resposta do arco e conforto na execução.
           </p>
           <ul class="lista-check">
-            <li>Troca de crina e revisão estrutural de arcos</li>
-            <li>Confecção e ajuste de cavaletes, almas, pestanas e cravelhas</li>
-            <li>Plaina de espelho, colagem de trincas e retoques de verniz</li>
+            <li data-i18n="lutheria_li1">Troca de crina e revisão estrutural de arcos</li>
+            <li data-i18n="lutheria_li2">Confecção e ajuste de cavaletes, almas, pestanas e cravelhas</li>
+            <li data-i18n="lutheria_li3">Plaina de espelho, colagem de trincas e retoques de verniz</li>
           </ul>
         </div>
         <div class="caixa-info">
-          <span class="rotulo-caixa">Atendimento direto</span>
-          <h3>Avaliação e Orçamento</h3>
-          <p>Envie fotos ou descreva o serviço ou produto desejado diretamente pelo WhatsApp.</p>
+          <span class="rotulo-caixa" data-i18n="caixa_rotulo">Atendimento direto</span>
+          <h3 data-i18n="caixa_h3">Avaliação e Orçamento</h3>
+          <p data-i18n="caixa_p">Envie fotos ou descreva o serviço ou produto desejado diretamente pelo WhatsApp.</p>
           <a
             href="https://wa.me/5531996255116?text=Ol%C3%A1%20Joseph,%20gostaria%20de%20avaliar%20um%20servi%C3%A7o%20ou%20produto."
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-primario btn-full"
+            data-wa-key="destaque"
+            data-i18n="caixa_btn"
             onclick="rastrearWhatsApp('destaque_avaliacao_orcamento')"
           >
             Chamar no WhatsApp
@@ -308,9 +377,9 @@
     <section id="loja" class="secao">
       <div class="container">
         <div class="cabecalho-secao">
-          <span class="subtitulo-secao">Catálogo e Bancada</span>
-          <h2 class="titulo-secao">Produtos e Bancada</h2>
-          <p class="intro-secao">
+          <span class="subtitulo-secao" data-i18n="loja_sub">Catálogo e Bancada</span>
+          <h2 class="titulo-secao" data-i18n="loja_titulo">Produtos e Bancada</h2>
+          <p class="intro-secao" data-i18n="loja_intro">
             Áreas organizadas para receber o catálogo de peças e itens de oficina conforme o acervo for disponibilizado.
           </p>
         </div>
@@ -318,20 +387,20 @@
         <div class="grid-cards grid-tres">
           <article class="card">
             <span class="numero-card">I</span>
-            <h3>Instrumentos Selecionados</h3>
-            <p>Violinos, violas, violoncelos e contrabaixos revisados e regulados para estudo e atuação profissional, prontos para tocar.</p>
+            <h3 data-i18n="prod1_h3">Instrumentos Selecionados</h3>
+            <p data-i18n="prod1_p">Violinos, violas, violoncelos e contrabaixos revisados e regulados para estudo e atuação profissional, prontos para tocar.</p>
           </article>
 
           <article class="card">
             <span class="numero-card">II</span>
-            <h3>Acessórios e Consumíveis</h3>
-            <p>Encordoamentos, breus, crina para arco, espaleiras, estojos e componentes de reposição para manutenção contínua.</p>
+            <h3 data-i18n="prod2_h3">Acessórios e Consumíveis</h3>
+            <p data-i18n="prod2_p">Encordoamentos, breus, crina para arco, espaleiras, estojos e componentes de reposição para manutenção contínua.</p>
           </article>
 
           <article class="card">
             <span class="numero-card">III</span>
-            <h3>Ferramentas Artesanais</h3>
-            <p>Raspilhas e ferramentas preparadas na oficina a partir de chapa metálica temperada e afiadas sob medida para trabalho fino em madeira.</p>
+            <h3 data-i18n="prod3_h3">Ferramentas Artesanais</h3>
+            <p data-i18n="prod3_p">Raspilhas e ferramentas preparadas na oficina a partir de chapa metálica temperada e afiadas sob medida para trabalho fino em madeira.</p>
           </article>
         </div>
       </div>
@@ -340,9 +409,9 @@
     <!-- Atendimento Institucional -->
     <section id="institucional" class="secao secao-clara">
       <div class="container sobre-box">
-        <span class="subtitulo-secao">Fornecimento e Laudos</span>
-        <h2 class="titulo-secao">Atendimento Institucional e Licitações</h2>
-        <p>
+        <span class="subtitulo-secao" data-i18n="inst_sub">Fornecimento e Laudos</span>
+        <h2 class="titulo-secao" data-i18n="inst_titulo">Atendimento Institucional e Licitações</h2>
+        <p data-i18n="inst_p">
           Estrutura formalizada (ME / CNPJ ativo) preparada para participar de processos licitatórios e atender demandas institucionais envolvendo manutenção de instrumentos de cordas, laudos técnicos e fornecimento de materiais e equipamentos musicais em Belo Horizonte e Minas Gerais.
         </p>
       </div>
@@ -352,34 +421,34 @@
     <section id="faq" class="secao">
       <div class="container faq-container">
         <div class="cabecalho-secao">
-          <span class="subtitulo-secao">Dúvidas Comuns</span>
-          <h2 class="titulo-secao">Perguntas Frequentes</h2>
+          <span class="subtitulo-secao" data-i18n="faq_sub">Dúvidas Comuns</span>
+          <h2 class="titulo-secao" data-i18n="faq_titulo">Perguntas Frequentes</h2>
         </div>
 
         <div class="faq-lista">
           <details class="faq-item">
-            <summary>Como funciona o atendimento na oficina em Belo Horizonte?</summary>
-            <p>O atendimento presencial em Belo Horizonte é realizado com hora marcada para garantir avaliação técnica individualizada de cada instrumento ou arco. Também recebemos e enviamos arcos e casos específicos de outras regiões mediante agendamento prévio pelo WhatsApp (31) 99625-5116.</p>
+            <summary data-i18n="faq1_q">Como funciona o atendimento na oficina em Belo Horizonte?</summary>
+            <p data-i18n="faq1_a">O atendimento presencial em Belo Horizonte é realizado com hora marcada para garantir avaliação técnica individualizada de cada instrumento ou arco. Também recebemos e enviamos arcos e casos específicos de outras regiões mediante agendamento prévio pelo WhatsApp (31) 99625-5116.</p>
           </details>
 
           <details class="faq-item">
-            <summary>Quais instrumentos de cordas são atendidos na lutheria?</summary>
-            <p>Atendemos toda a família das cordas friccionadas: violinos, violas de arco, violoncelos e contrabaixos acústicos — desde instrumentos de estudantes iniciantes que precisam de regulagem de conforto até instrumentos de músicos profissionais e orquestras.</p>
+            <summary data-i18n="faq2_q">Quais instrumentos de cordas são atendidos na lutheria?</summary>
+            <p data-i18n="faq2_a">Atendemos toda a família das cordas friccionadas: violinos, violas de arco, violoncelos e contrabaixos acústicos — desde instrumentos de estudantes iniciantes que precisam de regulagem de conforto até instrumentos de músicos profissionais e orquestras.</p>
           </details>
 
           <details class="faq-item">
-            <summary>De quanto em quanto tempo devo trocar a crina do arco?</summary>
-            <p>Para músicos de estudo diário intenso ou orquestra, recomenda-se a troca de crina a cada 6 meses. Para estudantes com prática moderada, entre 8 e 12 meses, ou sempre que a crina perder aderência mesmo com breu, apresentar fios rompidos em excesso ou comprometer a curvatura da vareta.</p>
+            <summary data-i18n="faq3_q">De quanto em quanto tempo devo trocar a crina do arco?</summary>
+            <p data-i18n="faq3_a">Para músicos de estudo diário intenso ou orquestra, recomenda-se a troca de crina a cada 6 meses. Para estudantes com prática moderada, entre 8 e 12 meses, ou sempre que a crina perder aderência mesmo com breu, apresentar fios rompidos em excesso ou comprometer a curvatura da vareta.</p>
           </details>
 
           <details class="faq-item">
-            <summary>Vale a pena regular um violino novo de fábrica com um luthier?</summary>
-            <p>Sim. Instrumentos saídos de fábrica geralmente vêm com cavalete bruto (alto e espesso), alma mal posicionada, pestana desajustada e cravelhas que escorregam ou travam. A regulagem de oficina transforma a tocabilidade, a estabilidade da afinação e a resposta sonora do instrumento.</p>
+            <summary data-i18n="faq4_q">Vale a pena regular um violino novo de fábrica com um luthier?</summary>
+            <p data-i18n="faq4_a">Sim. Instrumentos saídos de fábrica geralmente vêm com cavalete bruto (alto e espesso), alma mal posicionada, pestana desajustada e cravelhas que escorregam ou travam. A regulagem de oficina transforma a tocabilidade, a estabilidade da afinação e a resposta sonora do instrumento.</p>
           </details>
 
           <details class="faq-item">
-            <summary>A oficina atende escolas de música, projetos sociais e licitações?</summary>
-            <p>Sim. Possuímos empresa formalizada (ME / CNPJ ativo) com documentação regularizada para participar de processos licitatórios, realizar manutenção preventiva e corretiva de acervos, emitir laudos técnicos e fornecer instrumentos e acessórios para instituições públicas e privadas.</p>
+            <summary data-i18n="faq5_q">A oficina atende escolas de música, projetos sociais e licitações?</summary>
+            <p data-i18n="faq5_a">Sim. Possuímos empresa formalizada (ME / CNPJ ativo) com documentação regularizada para participar de processos licitatórios, realizar manutenção preventiva e corretiva de acervos, emitir laudos técnicos e fornecer instrumentos e acessórios para instituições públicas e privadas.</p>
           </details>
         </div>
       </div>
@@ -388,15 +457,17 @@
     <!-- Contato -->
     <section id="contato" class="secao secao-clara">
       <div class="container contato-box">
-        <span class="subtitulo-secao">Ateliê</span>
-        <h2>Contato</h2>
-        <p>Atendimento com hora marcada em Belo Horizonte - MG e envio/recebimento sob consulta.</p>
+        <span class="subtitulo-secao" data-i18n="contato_sub">Ateliê</span>
+        <h2 data-i18n="contato_h2">Contato</h2>
+        <p data-i18n="contato_p">Atendimento com hora marcada em Belo Horizonte - MG e envio/recebimento sob consulta.</p>
         <div class="contato-links">
           <a
             href="https://wa.me/5531996255116?text=Ol%C3%A1%20Joseph,%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es."
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-primario"
+            data-wa-key="contato"
+            data-i18n="contato_btn"
             onclick="rastrearWhatsApp('secao_contato')"
           >WhatsApp (31) 99625-5116</a>
         </div>
@@ -406,10 +477,10 @@
 
   <footer class="rodape">
     <div class="container rodape-flex">
-      <p>&copy; 2026 Joseph Medeiros — Luthier, Conserto e Restauro. Belo Horizonte, MG.</p>
+      <p data-i18n="footer_copy">&copy; 2026 Joseph Medeiros — Luthier, Conserto e Restauro. Belo Horizonte, MG.</p>
       <nav class="rodape-links" aria-label="Links do rodapé">
-        <a href="/blog/">Blog de Lutheria</a>
-        <a href="/avaliar/">Avaliar Atendimento</a>
+        <a href="/blog/" data-i18n="footer_blog">Blog de Lutheria</a>
+        <a href="/avaliar/" data-i18n="footer_avaliar">Avaliar Atendimento</a>
       </nav>
     </div>
   </footer>
@@ -420,6 +491,7 @@
     target="_blank"
     rel="noopener noreferrer"
     class="whatsapp-float"
+    data-wa-key="float"
     aria-label="Falar com Joseph Medeiros no WhatsApp"
     onclick="rastrearWhatsApp('botao_flutuante')"
   >
