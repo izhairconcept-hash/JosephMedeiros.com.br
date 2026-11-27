@@ -75,7 +75,7 @@
     .brand span { font-size: 0.78rem; color: #e5d5c3; }
 
     nav.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-    nav.tabs button {
+    nav.tabs button, nav.tabs a {
       background: rgba(255,255,255,0.12);
       border: none;
       color: #fff;
@@ -84,9 +84,10 @@
       cursor: pointer;
       font-size: 0.88rem;
       font-weight: 500;
+      text-decoration: none;
       transition: 0.2s;
     }
-    nav.tabs button.active, nav.tabs button:hover {
+    nav.tabs button.active, nav.tabs button:hover, nav.tabs a:hover {
       background: var(--accent);
       color: #fff;
     }
@@ -160,6 +161,7 @@
       cursor: pointer;
       transition: 0.15s;
     }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-accent { background: var(--accent); color: #fff; }
@@ -342,6 +344,7 @@
         <button onclick="mudarAba('historico', this)">Orçamentos Salvos (<span id="count-orc">0</span>)</button>
         <button onclick="mudarAba('tabela', this)">Tabela de Preços (<span id="count-srv">0</span>)</button>
         <button onclick="mudarAba('clientes', this)">Clientes (<span id="count-cli">0</span>)</button>
+        <a href="../estoque/" title="Ir para Controle de Estoque">↗ Estoque</a>
       </nav>
       <div class="user-actions">
         <span id="user-email"></span>
@@ -463,7 +466,7 @@
               </div>
 
               <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
-                <button class="btn btn-primary" onclick="salvarOrcamentoNuvem()">Salvar na Nuvem</button>
+                <button class="btn btn-primary" id="btn-salvar-orc" onclick="salvarOrcamentoNuvem()">Salvar na Nuvem</button>
                 <button class="btn btn-accent" onclick="gerarPDF()">Gerar / Baixar PDF</button>
                 <button class="btn btn-success" onclick="enviarWhatsApp()">Enviar Resumo WhatsApp</button>
               </div>
@@ -523,7 +526,7 @@
             </div>
             <div class="field">
               <label>Categoria</label>
-              <input type="text" id="srv-cat" placeholder="Ex: Ajustes e Montagem" />
+              <input type="text" id="srv-cat" placeholder="Ex: Violino / Viola, Violoncelo, Contrabaixo, Arcos" />
             </div>
             <div class="field">
               <label>Valor Padrão (R$)</label>
@@ -540,7 +543,7 @@
               <input type="text" id="srv-unid" value="Serviço" />
             </div>
           </div>
-          <button class="btn btn-primary" onclick="salvarServicoNuvem()">Salvar Serviço na Planilha</button>
+          <button class="btn btn-primary" id="btn-salvar-srv" onclick="salvarServicoNuvem()">Salvar Serviço na Planilha</button>
           <button class="btn btn-outline" onclick="limparFormServico()">Limpar</button>
         </div>
 
@@ -656,17 +659,15 @@
 
   <script>
     // =========================================================================
-    // CONFIGURAÇÃO JÁ PREENCHIDA
+    // CONFIGURAÇÃO ATUALIZADA
     // =========================================================================
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyg_HjJBWydlMXFVbSXuFgl2Zhq0Bus2IwXZ2ge_59HovU73X0i3Di4LO5TyR-QE8T-eg/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzxYWhOMzOznjSh_0kYT2I3PFDvdrGK1i1pE_sveHEaajiJhoHJEucCe33nC4dQwrbE/exec';
     const GOOGLE_CLIENT_ID = '504388621271-3s72o1fc0umnkg55qiou43tgqtvaqg3q.apps.googleusercontent.com';
 
-    // Estado Global
     let idToken = localStorage.getItem('jm_luthier_token') || '';
     let db = { servicos: [], clientes: [], orcamentos: [] };
     let itensAtuais = [];
 
-    // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('orc-data').value = new Date().toISOString().split('T')[0];
       const gOnload = document.getElementById('g_id_onload');
@@ -677,7 +678,6 @@
       }
     });
 
-    // Callback do Botão Login Google
     function handleCredentialResponse(response) {
       idToken = response.credential;
       localStorage.setItem('jm_luthier_token', idToken);
@@ -688,9 +688,12 @@
       mostrarToast('Autenticando e carregando dados da planilha...');
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          throw new Error('Sua sessão Google expirou (1h). Clique em Entrar com o Google novamente.');
+        }
         document.getElementById('user-email').textContent = payload.email;
 
-        const res = await fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(token)}`);
+        const res = await fetch(`${APPS_SCRIPT_URL}?modulo=orcamentos&token=${encodeURIComponent(token)}`);
         const json = await res.json();
 
         if (json.status !== 'ok') {
@@ -719,7 +722,6 @@
       location.reload();
     }
 
-    // Navegação entre abas
     function mudarAba(nome, btn) {
       ['editor', 'historico', 'tabela', 'clientes'].forEach(t => {
         document.getElementById('tab-' + t).style.display = (t === nome) ? 'block' : 'none';
@@ -733,13 +735,11 @@
       document.getElementById('count-srv').textContent = db.servicos.length;
       document.getElementById('count-cli').textContent = db.clientes.length;
 
-      // Popular filtro de categorias
       const cats = [...new Set(db.servicos.map(s => s.Categoria).filter(Boolean))];
       const selCat = document.getElementById('filtro-servico-cat');
       selCat.innerHTML = '<option value="">Todas as categorias</option>' +
         cats.map(c => `<option value="${c}">${c}</option>`).join('');
 
-      // Popular seletor rápido de clientes
       const selCli = document.getElementById('select-cliente-rapido');
       selCli.innerHTML = '<option value="">Carregar cliente salvo...</option>' +
         db.clientes.map((c, idx) => `<option value="${idx}">${c.Nome_RazaoSocial}</option>`).join('');
@@ -751,7 +751,6 @@
       renderizarClientesAdmin();
     }
 
-    // Catálogo lateral de serviços
     function renderizarCatalogo() {
       const texto = document.getElementById('filtro-servico-texto').value.toLowerCase();
       const cat = document.getElementById('filtro-servico-cat').value;
@@ -876,8 +875,8 @@
       renderizarItensOrcamento();
     }
 
-    // Salvar Orçamento e Cliente na Planilha
     async function salvarOrcamentoNuvem() {
+      const btn = document.getElementById('btn-salvar-orc');
       const nomeCliente = document.getElementById('cli-nome').value.trim();
       if (!nomeCliente) return alert('Informe o nome do cliente ou instituição.');
       if (!itensAtuais.length) return alert('Adicione pelo menos um serviço ao orçamento.');
@@ -899,13 +898,13 @@
         Observacoes_Tecnicas: document.getElementById('orc-obs').value.trim()
       };
 
+      btn.disabled = true;
       mostrarToast('Salvando orçamento na nuvem...');
       try {
         const res = await postAPI({ acao: 'salvar_orcamento', dados: dadosOrc });
         document.getElementById('orc-numero').value = res.resultado.Numero;
         document.getElementById('badge-editando').textContent = `(${res.resultado.Numero})`;
 
-        // Salva cliente automaticamente se ainda não existir na base
         const jaExiste = db.clientes.some(c => c.Nome_RazaoSocial.toLowerCase() === nomeCliente.toLowerCase());
         if (!jaExiste) {
           await postAPI({
@@ -923,10 +922,11 @@
         mostrarToast(`Orçamento ${res.resultado.Numero} salvo com sucesso!`);
       } catch (err) {
         alert('Erro ao salvar: ' + err.message);
+      } finally {
+        btn.disabled = false;
       }
     }
 
-    // Histórico
     function renderizarHistorico() {
       const busca = document.getElementById('busca-historico').value.toLowerCase();
       const tbody = document.getElementById('lista-historico-body');
@@ -990,7 +990,6 @@
       mostrarToast(duplicar ? 'Orçamento duplicado para edição.' : `Orçamento ${orc.Numero} carregado.`);
     }
 
-    // Gerenciar Tabela de Preços
     function renderizarTabelaAdmin() {
       const tbody = document.getElementById('tabela-admin-body');
       tbody.innerHTML = db.servicos.map(s => `
@@ -1022,6 +1021,7 @@
     }
 
     async function salvarServicoNuvem() {
+      const btn = document.getElementById('btn-salvar-srv');
       const dados = {
         ID: document.getElementById('srv-id').value.trim(),
         Categoria: document.getElementById('srv-cat').value.trim() || 'Geral',
@@ -1032,13 +1032,20 @@
       };
       if (!dados.Descricao) return alert('Preencha a descrição do serviço.');
 
+      btn.disabled = true;
       mostrarToast('Atualizando tabela de preços...');
-      await postAPI({ acao: 'salvar_servico', dados });
-      limparFormServico();
-      await iniciarSessao(idToken);
+      try {
+        await postAPI({ acao: 'salvar_servico', dados });
+        limparFormServico();
+        await iniciarSessao(idToken);
+        mostrarToast('Serviço salvo!');
+      } catch (err) {
+        alert('Erro ao salvar serviço: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
 
-    // Clientes Admin
     function renderizarClientesAdmin() {
       const tbody = document.getElementById('lista-clientes-body');
       tbody.innerHTML = db.clientes.map((c, i) => `
@@ -1060,7 +1067,6 @@
       mudarAba('editor', document.querySelector('nav.tabs button'));
     }
 
-    // Gerar PDF A4
     function gerarPDF() {
       const { subtotal, desconto, total } = recalcularTotais();
       const num = document.getElementById('orc-numero').value || 'ORÇAMENTO';
@@ -1104,7 +1110,6 @@
       document.title = tituloOriginal;
     }
 
-    // Enviar resumo formatado no WhatsApp
     function enviarWhatsApp() {
       const tel = document.getElementById('cli-tel').value.replace(/\D/g, '');
       const nome = document.getElementById('cli-nome').value || 'Olá';
@@ -1127,15 +1132,26 @@
       window.open(url, '_blank');
     }
 
-    // Utilitários
     async function postAPI(payload) {
       payload.token = idToken;
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-      const json = await res.json();
-      if (json.status !== 'ok') throw new Error(json.mensagem || 'Erro na API');
+      const text = await res.text();
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        throw new Error('Resposta inválida do servidor Google. Verifique a implantação do Apps Script.');
+      }
+      if (json.status !== 'ok') {
+        if (String(json.mensagem).includes('expirada') || String(json.mensagem).includes('inválida')) {
+          sair();
+        }
+        throw new Error(json.mensagem || 'Erro na API');
+      }
       return json;
     }
 
@@ -1148,7 +1164,7 @@
       t.textContent = msg;
       t.style.display = 'block';
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
     }
   </script>
 </body>
