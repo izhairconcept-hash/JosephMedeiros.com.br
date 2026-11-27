@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Orçamentos | Joseph Medeiros — Luthier</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --surface: #ffffff;
+      --primary: #3b2314;
+      --primary-hover: #52321e;
+      --accent: #b8860b;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    /* TELA DE LOGIN */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #2b180c 0%, #4a2c18 100%);
+    }
+    .login-card {
+      background: var(--surface);
+      padding: 40px 32px;
+      border-radius: 14px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+    .login-card h1 { font-size: 1.45rem; color: var(--primary); margin-bottom: 6px; }
+    .login-card p { font-size: 0.9rem; color: var(--muted); margin-bottom: 24px; }
+    .google-btn-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+    #login-error { color: var(--danger); font-size: 0.85rem; margin-top: 10px; }
+
+    /* APP PRINCIPAL */
+    #app-screen { display: none; min-height: 100vh; }
+
+    header.topbar {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .brand { display: flex; flex-direction: column; }
+    .brand strong { font-size: 1.1rem; letter-spacing: 0.3px; }
+    .brand span { font-size: 0.78rem; color: #e5d5c3; }
+
+    nav.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    nav.tabs button {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    nav.tabs button.active, nav.tabs button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .user-actions { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+    .btn-logout {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    main.container { max-width: 1200px; margin: 24px auto; padding: 0 16px 60px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 20px; align-items: start; }
+    @media (max-width: 920px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 600px) { .form-grid, .form-grid-3 { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .field label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
+    }
+
+    /* BOTÕES */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { filter: brightness(0.92); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid #d1d5db; color: var(--text); }
+    .btn-outline:hover { background: #f9fafb; }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+    .btn-danger-text { background: none; color: var(--danger); padding: 4px 8px; }
+
+    /* CATÁLOGO DE SERVIÇOS */
+    .catalogo-lista {
+      max-height: 430px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .servico-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .servico-item:last-child { border-bottom: none; }
+    .servico-item:hover { background: #faf8f5; }
+    .servico-info strong { display: block; font-size: 0.9rem; }
+    .servico-info small { color: var(--muted); font-size: 0.76rem; }
+    .servico-preco { font-weight: 700; color: var(--primary); white-space: nowrap; font-size: 0.92rem; }
+
+    /* TABELA DE ITENS DO ORÇAMENTO */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 9px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.8rem; }
+    .td-num { text-align: right; white-space: nowrap; }
+    .qty-input { width: 58px; padding: 5px; text-align: center; }
+    .price-input { width: 92px; padding: 5px; text-align: right; }
+
+    .totais-box {
+      margin-top: 14px;
+      padding: 14px;
+      background: #faf8f5;
+      border-radius: 8px;
+      border: 1px solid #e7dfd3;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .totais-row { display: flex; gap: 20px; align-items: center; font-size: 0.95rem; }
+    .totais-row.final { font-size: 1.2rem; font-weight: 700; color: var(--primary); border-top: 1px solid #d6cbb9; padding-top: 8px; }
+
+    /* BADGES DE STATUS */
+    .badge {
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .badge-Aberto { background: #fef3c7; color: #92400e; }
+    .badge-Aprovado { background: #dcfce7; color: #166534; }
+    .badge-Concluido { background: #dbeafe; color: #1e40af; }
+    .badge-Arquivado { background: #f3f4f6; color: #4b5563; }
+
+    /* TOAST DE NOTIFICAÇÃO */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1f2937;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+    }
+
+    /* ÁREA DE IMPRESSÃO A4 (OCULTA NA TELA, VISÍVEL NO PRINT/PDF) */
+    #print-area { display: none; }
+
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      #login-screen, #app-screen, #toast { display: none !important; }
+      #print-area {
+        display: block !important;
+        width: 100%;
+        max-width: 210mm;
+        margin: 0 auto;
+        padding: 10mm 12mm;
+        font-size: 11pt;
+      }
+      .pdf-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #3b2314;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+      }
+      .pdf-brand h1 { font-size: 18pt; color: #3b2314; margin-bottom: 2px; }
+      .pdf-brand p { font-size: 9pt; color: #333; line-height: 1.35; }
+      .pdf-meta { text-align: right; font-size: 9.5pt; }
+      .pdf-meta .num { font-size: 13pt; font-weight: bold; color: #3b2314; }
+      .pdf-box {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+        background: #fcfbfa;
+      }
+      .pdf-box h3 {
+        font-size: 9.5pt;
+        text-transform: uppercase;
+        color: #3b2314;
+        margin-bottom: 6px;
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 3px;
+      }
+      .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; font-size: 9.5pt; }
+      .pdf-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+      .pdf-table th { background: #3b2314 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 7px 8px; }
+      .pdf-table td { border-bottom: 1px solid #ddd; padding: 7px 8px; }
+      .pdf-totals { margin-left: auto; width: 260px; font-size: 10pt; margin-top: 8px; }
+      .pdf-totals div { display: flex; justify-content: space-between; padding: 4px 0; }
+      .pdf-totals .grand { font-size: 12pt; font-weight: bold; color: #3b2314; border-top: 2px solid #3b2314; padding-top: 6px; }
+      .pdf-notes { margin-top: 14px; font-size: 9pt; color: #333; white-space: pre-line; }
+      .pdf-signatures {
+        margin-top: 42px;
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        text-align: center;
+        font-size: 9pt;
+      }
+      .pdf-sig-line { flex: 1; border-top: 1px solid #333; padding-top: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TELA DE AUTENTICAÇÃO GOOGLE -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h1>Joseph Medeiros | Luthier</h1>
+      <p>Painel Administrativo de Orçamentos e Tabela de Serviços</p>
+      <div class="google-btn-wrap">
+        <div id="g_id_onload"
+             data-client_id="COLE_SEU_CLIENT_ID_AQUI.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+      </div>
+      <div id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- 2. PAINEL PRINCIPAL -->
+  <div id="app-screen">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Joseph Medeiros | Luthier</strong>
+        <span>CNPJ 34.491.631/0001-72 • Belo Horizonte - MG</span>
+      </div>
+      <nav class="tabs">
+        <button class="active" onclick="mudarAba('editor', this)">Novo / Editar Orçamento</button>
+        <button onclick="mudarAba('historico', this)">Orçamentos Salvos (<span id="count-orc">0</span>)</button>
+        <button onclick="mudarAba('tabela', this)">Tabela de Preços (<span id="count-srv">0</span>)</button>
+        <button onclick="mudarAba('clientes', this)">Clientes (<span id="count-cli">0</span>)</button>
+      </nav>
+      <div class="user-actions">
+        <span id="user-email"></span>
+        <button class="btn-logout" onclick="sair()">Sair</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- ABA 1: EDITOR DE ORÇAMENTO -->
+      <section id="tab-editor">
+        <div class="grid-2">
+          <!-- COLUNA ESQUERDA: DADOS E ITENS -->
+          <div>
+            <div class="card">
+              <h2>
+                <span>Dados do Orçamento <small id="badge-editando" style="color:var(--accent); font-weight:normal;"></small></span>
+                <button class="btn btn-outline btn-sm" onclick="novoOrcamento()">+ Limpar / Novo</button>
+              </h2>
+              <div class="form-grid-3">
+                <div class="field">
+                  <label>Número</label>
+                  <input type="text" id="orc-numero" placeholder="Automático" readonly style="background:#f9fafb;" />
+                </div>
+                <div class="field">
+                  <label>Data de Emissão</label>
+                  <input type="date" id="orc-data" />
+                </div>
+                <div class="field">
+                  <label>Validade (dias)</label>
+                  <input type="number" id="orc-validade" value="15" />
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Status</label>
+                  <select id="orc-status">
+                    <option value="Aberto">Aberto (Aguardando)</option>
+                    <option value="Aprovado">Aprovado</option>
+                    <option value="Concluido">Concluído / Entregue</option>
+                    <option value="Arquivado">Arquivado</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Prazo Estimado de Entrega</label>
+                  <input type="text" id="orc-prazo" placeholder="Ex: 5 dias úteis" />
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>
+                <span>Cliente e Instrumento</span>
+                <select id="select-cliente-rapido" style="width:auto; max-width:220px; font-size:0.82rem;" onchange="preencherClienteSelecionado()">
+                  <option value="">Carregar cliente salvo...</option>
+                </select>
+              </h2>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Nome do Músico / Instituição *</label>
+                  <input type="text" id="cli-nome" placeholder="Nome completo ou Escola/Orquestra" />
+                </div>
+                <div class="field">
+                  <label>CPF ou CNPJ</label>
+                  <input type="text" id="cli-doc" placeholder="Opcional" />
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label>WhatsApp / Telefone</label>
+                  <input type="text" id="cli-tel" placeholder="(31) 99999-9999" />
+                </div>
+                <div class="field">
+                  <label>Instrumento / Etiqueta / Série *</label>
+                  <input type="text" id="orc-instrumento" placeholder="Ex: Violino 4/4 Autor / Arco Pernambuco" />
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>
+                <span>Serviços e Peças do Orçamento</span>
+                <button class="btn btn-outline btn-sm" onclick="adicionarItemAvulso()">+ Item Manual</button>
+              </h2>
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Descrição do Serviço / Peça</th>
+                      <th style="width:65px;">Qtd</th>
+                      <th style="width:100px;">Unit. (R$)</th>
+                      <th class="td-num">Subtotal</th>
+                      <th style="width:36px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="itens-orcamento-body">
+                    <tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Selecione serviços na tabela ao lado ou adicione um item manual.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="totais-box">
+                <div class="totais-row">
+                  <span>Subtotal:</span>
+                  <strong id="txt-subtotal">R$ 0,00</strong>
+                </div>
+                <div class="totais-row">
+                  <span>Desconto (R$):</span>
+                  <input type="number" id="orc-desconto" value="0" min="0" step="1" style="width:100px; text-align:right;" oninput="recalcularTotais()" />
+                </div>
+                <div class="totais-row final">
+                  <span>TOTAL:</span>
+                  <span id="txt-total">R$ 0,00</span>
+                </div>
+              </div>
+
+              <div class="field" style="margin-top:14px;">
+                <label>Observações Técnicas / Laudo / Condições de Pagamento</label>
+                <textarea id="orc-obs" rows="3" placeholder="Ex: Diagnóstico técnico, garantia dos serviços, condições de pagamento (PIX, cartão ou empenho)..."></textarea>
+              </div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
+                <button class="btn btn-primary" onclick="salvarOrcamentoNuvem()">Salvar na Nuvem</button>
+                <button class="btn btn-accent" onclick="gerarPDF()">Gerar / Baixar PDF</button>
+                <button class="btn btn-success" onclick="enviarWhatsApp()">Enviar Resumo WhatsApp</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUNA DIREITA: TABELA RÁPIDA DE LUTHIERIA -->
+          <div class="card" style="position:sticky; top:76px;">
+            <h2>Tabela de Serviços (Clique para adicionar)</h2>
+            <div class="form-grid" style="margin-bottom:10px;">
+              <input type="text" id="filtro-servico-texto" placeholder="Buscar serviço..." oninput="renderizarCatalogo()" />
+              <select id="filtro-servico-cat" onchange="renderizarCatalogo()">
+                <option value="">Todas as categorias</option>
+              </select>
+            </div>
+            <div class="catalogo-lista" id="catalogo-servicos">
+              <div style="padding:20px; text-align:center; color:var(--muted);">Carregando tabela...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 2: HISTÓRICO DE ORÇAMENTOS -->
+      <section id="tab-historico" style="display:none;">
+        <div class="card">
+          <h2>
+            <span>Histórico de Orçamentos na Planilha</span>
+            <input type="text" id="busca-historico" placeholder="Buscar por cliente, número ou instrumento..." style="max-width:300px;" oninput="renderizarHistorico()" />
+          </h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Data</th>
+                  <th>Cliente</th>
+                  <th>Instrumento</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="lista-historico-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 3: GERENCIAR TABELA DE PREÇOS -->
+      <section id="tab-tabela" style="display:none;">
+        <div class="card">
+          <h2>Adicionar ou Editar Serviço na Planilha</h2>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>ID (deixe vazio p/ novo)</label>
+              <input type="text" id="srv-id" readonly placeholder="Automático" style="background:#f9fafb;" />
+            </div>
+            <div class="field">
+              <label>Categoria</label>
+              <input type="text" id="srv-cat" placeholder="Ex: Ajustes e Montagem" />
+            </div>
+            <div class="field">
+              <label>Valor Padrão (R$)</label>
+              <input type="number" id="srv-val" step="0.01" placeholder="150.00" />
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Descrição do Serviço</label>
+              <input type="text" id="srv-desc" placeholder="Ex: Troca de cavalete Albert Mirecourt France" />
+            </div>
+            <div class="field">
+              <label>Unidade</label>
+              <input type="text" id="srv-unid" value="Serviço" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="salvarServicoNuvem()">Salvar Serviço na Planilha</button>
+          <button class="btn btn-outline" onclick="limparFormServico()">Limpar</button>
+        </div>
+
+        <div class="card">
+          <h2>Serviços Cadastrados</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Categoria</th>
+                  <th>Descrição</th>
+                  <th class="td-num">Valor</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-admin-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 4: CLIENTES -->
+      <section id="tab-clientes" style="display:none;">
+        <div class="card">
+          <h2>Base de Clientes Salvos</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome / Instituição</th>
+                  <th>CPF / CNPJ</th>
+                  <th>Telefone</th>
+                  <th>Instrumento</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="lista-clientes-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 3. LAYOUT DE IMPRESSÃO / PDF A4 -->
+  <div id="print-area">
+    <div class="pdf-header">
+      <div class="pdf-brand">
+        <h1>Joseph Medeiros | Luthier</h1>
+        <p>
+          Construção, Manutenção e Restauração de Instrumentos de Arco e Arcos<br>
+          CNPJ: 34.491.631/0001-72 (ME) • Belo Horizonte - Minas Gerais<br>
+          Site: josephmedeiros.com.br
+        </p>
+      </div>
+      <div class="pdf-meta">
+        <div class="num" id="pdf-numero">ORÇAMENTO</div>
+        <div>Emissão: <strong id="pdf-data"></strong></div>
+        <div>Validade: <strong id="pdf-validade"></strong></div>
+        <div>Prazo de Entrega: <strong id="pdf-prazo"></strong></div>
+      </div>
+    </div>
+
+    <div class="pdf-box">
+      <h3>Identificação do Cliente e Instrumento</h3>
+      <div class="pdf-grid">
+        <div><strong>Cliente / Instituição:</strong> <span id="pdf-cli-nome"></span></div>
+        <div><strong>CPF / CNPJ:</strong> <span id="pdf-cli-doc"></span></div>
+        <div><strong>Telefone / WhatsApp:</strong> <span id="pdf-cli-tel"></span></div>
+        <div><strong>Instrumento:</strong> <span id="pdf-instrumento"></span></div>
+      </div>
+    </div>
+
+    <table class="pdf-table">
+      <thead>
+        <tr>
+          <th style="width:36px;">#</th>
+          <th>Descrição Técnica do Serviço / Componente</th>
+          <th style="width:55px; text-align:center;">Qtd</th>
+          <th style="width:95px; text-align:right;">Unitário</th>
+          <th style="width:105px; text-align:right;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="pdf-itens-body"></tbody>
+    </table>
+
+    <div class="pdf-totals">
+      <div><span>Subtotal:</span> <span id="pdf-subtotal"></span></div>
+      <div id="pdf-desconto-row"><span>Desconto:</span> <span id="pdf-desconto"></span></div>
+      <div class="grand"><span>Valor Total:</span> <span id="pdf-total"></span></div>
+    </div>
+
+    <div class="pdf-box" style="margin-top:16px;" id="pdf-obs-box">
+      <h3>Observações Técnicas e Condições</h3>
+      <div class="pdf-notes" id="pdf-obs"></div>
+    </div>
+
+    <div class="pdf-signatures">
+      <div class="pdf-sig-line">
+        <strong>Joseph Medeiros | Luthier</strong><br>
+        CNPJ 34.491.631/0001-72
+      </div>
+      <div class="pdf-sig-line">
+        <strong>De acordo (Cliente / Responsável)</strong><br>
+        Data: ____/____/20____
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURAÇÃO - PREENCHA COM SEUS DADOS
+    // =========================================================================
+    const APPS_SCRIPT_URL = 'COLE_SUA_URL_DO_APPS_SCRIPT_AQUI/exec';
+    const GOOGLE_CLIENT_ID = 'COLE_SEU_CLIENT_ID_AQUI.apps.googleusercontent.com';
+
+    // Estado Global
+    let idToken = localStorage.getItem('jm_luthier_token') || '';
+    let db = { servicos: [], clientes: [], orcamentos: [] };
+    let itensAtuais = [];
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('orc-data').value = new Date().toISOString().split('T')[0];
+      const gOnload = document.getElementById('g_id_onload');
+      if (gOnload) gOnload.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+
+      if (idToken) {
+        iniciarSessao(idToken);
+      }
+    });
+
+    // Callback do Botão Login Google
+    function handleCredentialResponse(response) {
+      idToken = response.credential;
+      localStorage.setItem('jm_luthier_token', idToken);
+      iniciarSessao(idToken);
+    }
+
+    async function iniciarSessao(token) {
+      mostrarToast('Autenticando e carregando dados da planilha...');
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        document.getElementById('user-email').textContent = payload.email;
+
+        const res = await fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(token)}`);
+        const json = await res.json();
+
+        if (json.status !== 'ok') {
+          throw new Error(json.mensagem || 'Acesso não autorizado.');
+        }
+
+        db.servicos = json.servicos || [];
+        db.clientes = json.clientes || [];
+        db.orcamentos = json.orcamentos || [];
+
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'block';
+
+        atualizarInterfaceCompleta();
+        mostrarToast('Dados sincronizados com sucesso!');
+      } catch (err) {
+        localStorage.removeItem('jm_luthier_token');
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-error').textContent = err.message;
+      }
+    }
+
+    function sair() {
+      localStorage.removeItem('jm_luthier_token');
+      location.reload();
+    }
+
+    // Navegação entre abas
+    function mudarAba(nome, btn) {
+      ['editor', 'historico', 'tabela', 'clientes'].forEach(t => {
+        document.getElementById('tab-' + t).style.display = (t === nome) ? 'block' : 'none';
+      });
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function atualizarInterfaceCompleta() {
+      document.getElementById('count-orc').textContent = db.orcamentos.length;
+      document.getElementById('count-srv').textContent = db.servicos.length;
+      document.getElementById('count-cli').textContent = db.clientes.length;
+
+      // Popular filtro de categorias
+      const cats = [...new Set(db.servicos.map(s => s.Categoria).filter(Boolean))];
+      const selCat = document.getElementById('filtro-servico-cat');
+      selCat.innerHTML = '<option value="">Todas as categorias</option>' +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+
+      // Popular seletor rápido de clientes
+      const selCli = document.getElementById('select-cliente-rapido');
+      selCli.innerHTML = '<option value="">Carregar cliente salvo...</option>' +
+        db.clientes.map((c, idx) => `<option value="${idx}">${c.Nome_RazaoSocial}</option>`).join('');
+
+      renderizarCatalogo();
+      renderizarItensOrcamento();
+      renderizarHistorico();
+      renderizarTabelaAdmin();
+      renderizarClientesAdmin();
+    }
+
+    // Catálogo lateral de serviços
+    function renderizarCatalogo() {
+      const texto = document.getElementById('filtro-servico-texto').value.toLowerCase();
+      const cat = document.getElementById('filtro-servico-cat').value;
+      const box = document.getElementById('catalogo-servicos');
+
+      const filtrados = db.servicos.filter(s => {
+        if (String(s.Ativo).toUpperCase() === 'NAO') return false;
+        const matchTexto = s.Descricao.toLowerCase().includes(texto) || s.Categoria.toLowerCase().includes(texto);
+        const matchCat = !cat || s.Categoria === cat;
+        return matchTexto && matchCat;
+      });
+
+      if (!filtrados.length) {
+        box.innerHTML = '<div style="padding:16px; text-align:center; color:var(--muted);">Nenhum serviço encontrado.</div>';
+        return;
+      }
+
+      box.innerHTML = filtrados.map(s => `
+        <div class="servico-item">
+          <div class="servico-info">
+            <strong>${s.Descricao}</strong>
+            <small>${s.Categoria} • ${s.Unidade || 'Serviço'}</small>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="servico-preco">${formatarMoeda(s.Valor)}</span>
+            <button class="btn btn-primary btn-sm" onclick='adicionarServicoAoOrcamento(${JSON.stringify(s).replace(/'/g, "&#39;")})'>+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function adicionarServicoAoOrcamento(srv) {
+      const existente = itensAtuais.find(i => i.descricao === srv.Descricao && Number(i.valor) === Number(srv.Valor));
+      if (existente) {
+        existente.qtd += 1;
+      } else {
+        itensAtuais.push({
+          id: srv.ID || '',
+          descricao: srv.Descricao,
+          qtd: 1,
+          valor: Number(srv.Valor)
+        });
+      }
+      renderizarItensOrcamento();
+      mostrarToast('Adicionado: ' + srv.Descricao);
+    }
+
+    function adicionarItemAvulso() {
+      itensAtuais.push({ id: 'AVULSO', descricao: '', qtd: 1, valor: 0 });
+      renderizarItensOrcamento();
+    }
+
+    function renderizarItensOrcamento() {
+      const tbody = document.getElementById('itens-orcamento-body');
+      if (!itensAtuais.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Selecione serviços na tabela ao lado ou adicione um item manual.</td></tr>';
+        recalcularTotais();
+        return;
+      }
+
+      tbody.innerHTML = itensAtuais.map((item, i) => `
+        <tr>
+          <td><input type="text" value="${item.descricao.replace(/"/g, '&quot;')}" placeholder="Descrição do serviço ou peça" oninput="itensAtuais[${i}].descricao = this.value" /></td>
+          <td><input type="number" class="qty-input" min="1" value="${item.qtd}" oninput="itensAtuais[${i}].qtd = Number(this.value)||1; recalcularTotais()" /></td>
+          <td><input type="number" class="price-input" step="0.01" value="${item.valor}" oninput="itensAtuais[${i}].valor = Number(this.value)||0; recalcularTotais()" /></td>
+          <td class="td-num" id="sub-item-${i}"><strong>${formatarMoeda(item.qtd * item.valor)}</strong></td>
+          <td><button class="btn btn-danger-text" onclick="removerItem(${i})" title="Remover">✕</button></td>
+        </tr>
+      `).join('');
+
+      recalcularTotais();
+    }
+
+    function removerItem(idx) {
+      itensAtuais.splice(idx, 1);
+      renderizarItensOrcamento();
+    }
+
+    function recalcularTotais() {
+      let subtotal = 0;
+      itensAtuais.forEach((item, i) => {
+        const sub = (Number(item.qtd) || 0) * (Number(item.valor) || 0);
+        subtotal += sub;
+        const el = document.getElementById(`sub-item-${i}`);
+        if (el) el.innerHTML = `<strong>${formatarMoeda(sub)}</strong>`;
+      });
+
+      const desconto = Number(document.getElementById('orc-desconto').value) || 0;
+      const total = Math.max(0, subtotal - desconto);
+
+      document.getElementById('txt-subtotal').textContent = formatarMoeda(subtotal);
+      document.getElementById('txt-total').textContent = formatarMoeda(total);
+      return { subtotal, desconto, total };
+    }
+
+    function preencherClienteSelecionado() {
+      const idx = document.getElementById('select-cliente-rapido').value;
+      if (idx === '') return;
+      const cli = db.clientes[Number(idx)];
+      document.getElementById('cli-nome').value = cli.Nome_RazaoSocial || '';
+      document.getElementById('cli-doc').value = cli.CPF_CNPJ || '';
+      document.getElementById('cli-tel').value = cli.Telefone || '';
+      if (cli.Instrumento_Padrao) {
+        document.getElementById('orc-instrumento').value = cli.Instrumento_Padrao;
+      }
+    }
+
+    function novoOrcamento() {
+      document.getElementById('orc-numero').value = '';
+      document.getElementById('badge-editando').textContent = '';
+      document.getElementById('orc-data').value = new Date().toISOString().split('T')[0];
+      document.getElementById('orc-validade').value = 15;
+      document.getElementById('orc-status').value = 'Aberto';
+      document.getElementById('orc-prazo').value = '';
+      document.getElementById('cli-nome').value = '';
+      document.getElementById('cli-doc').value = '';
+      document.getElementById('cli-tel').value = '';
+      document.getElementById('orc-instrumento').value = '';
+      document.getElementById('orc-desconto').value = 0;
+      document.getElementById('orc-obs').value = '';
+      itensAtuais = [];
+      renderizarItensOrcamento();
+    }
+
+    // Salvar Orçamento e Cliente na Planilha
+    async function salvarOrcamentoNuvem() {
+      const nomeCliente = document.getElementById('cli-nome').value.trim();
+      if (!nomeCliente) return alert('Informe o nome do cliente ou instituição.');
+      if (!itensAtuais.length) return alert('Adicione pelo menos um serviço ao orçamento.');
+
+      const { total, desconto } = recalcularTotais();
+      const dadosOrc = {
+        Numero: document.getElementById('orc-numero').value,
+        Data_Emissao: document.getElementById('orc-data').value,
+        Validade_Dias: Number(document.getElementById('orc-validade').value) || 15,
+        Status: document.getElementById('orc-status').value,
+        Cliente_Nome: nomeCliente,
+        Cliente_Doc: document.getElementById('cli-doc').value.trim(),
+        Cliente_Tel: document.getElementById('cli-tel').value.trim(),
+        Instrumento_Detalhes: document.getElementById('orc-instrumento').value.trim(),
+        Prazo_Entrega: document.getElementById('orc-prazo').value.trim(),
+        Itens_JSON: JSON.stringify(itensAtuais),
+        Desconto: desconto,
+        Valor_Total: total,
+        Observacoes_Tecnicas: document.getElementById('orc-obs').value.trim()
+      };
+
+      mostrarToast('Salvando orçamento na nuvem...');
+      try {
+        const res = await postAPI({ acao: 'salvar_orcamento', dados: dadosOrc });
+        document.getElementById('orc-numero').value = res.resultado.Numero;
+        document.getElementById('badge-editando').textContent = `(${res.resultado.Numero})`;
+
+        // Salva cliente automaticamente se ainda não existir na base
+        const jaExiste = db.clientes.some(c => c.Nome_RazaoSocial.toLowerCase() === nomeCliente.toLowerCase());
+        if (!jaExiste) {
+          await postAPI({
+            acao: 'salvar_cliente',
+            dados: {
+              Nome_RazaoSocial: nomeCliente,
+              CPF_CNPJ: dadosOrc.Cliente_Doc,
+              Telefone: dadosOrc.Cliente_Tel,
+              Instrumento_Padrao: dadosOrc.Instrumento_Detalhes
+            }
+          });
+        }
+
+        await iniciarSessao(idToken);
+        mostrarToast(`Orçamento ${res.resultado.Numero} salvo com sucesso!`);
+      } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+      }
+    }
+
+    // Histórico
+    function renderizarHistorico() {
+      const busca = document.getElementById('busca-historico').value.toLowerCase();
+      const tbody = document.getElementById('lista-historico-body');
+      const lista = [...db.orcamentos].reverse().filter(o =>
+        String(o.Numero).toLowerCase().includes(busca) ||
+        String(o.Cliente_Nome).toLowerCase().includes(busca) ||
+        String(o.Instrumento_Detalhes).toLowerCase().includes(busca)
+      );
+
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted);">Nenhum orçamento registrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = lista.map(o => {
+        const dataFmt = String(o.Data_Emissao).split('T')[0];
+        return `
+          <tr>
+            <td><strong>${o.Numero}</strong></td>
+            <td>${dataFmt}</td>
+            <td>${o.Cliente_Nome}</td>
+            <td>${o.Instrumento_Detalhes || '-'}</td>
+            <td><strong>${formatarMoeda(o.Valor_Total)}</strong></td>
+            <td><span class="badge badge-${o.Status}">${o.Status}</span></td>
+            <td style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick='carregarOrcamento("${o.Numero}", false)'>Abrir</button>
+              <button class="btn btn-outline btn-sm" onclick='carregarOrcamento("${o.Numero}", true)'>Duplicar</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function carregarOrcamento(numero, duplicar) {
+      const orc = db.orcamentos.find(o => String(o.Numero) === String(numero));
+      if (!orc) return;
+
+      document.getElementById('orc-numero').value = duplicar ? '' : orc.Numero;
+      document.getElementById('badge-editando').textContent = duplicar ? '(Cópia)' : `(${orc.Numero})`;
+      document.getElementById('orc-data').value = duplicar
+        ? new Date().toISOString().split('T')[0]
+        : String(orc.Data_Emissao).split('T')[0];
+      document.getElementById('orc-validade').value = orc.Validade_Dias || 15;
+      document.getElementById('orc-status').value = duplicar ? 'Aberto' : (orc.Status || 'Aberto');
+      document.getElementById('orc-prazo').value = orc.Prazo_Entrega || '';
+      document.getElementById('cli-nome').value = orc.Cliente_Nome || '';
+      document.getElementById('cli-doc').value = orc.Cliente_Doc || '';
+      document.getElementById('cli-tel').value = orc.Cliente_Tel || '';
+      document.getElementById('orc-instrumento').value = orc.Instrumento_Detalhes || '';
+      document.getElementById('orc-desconto').value = orc.Desconto || 0;
+      document.getElementById('orc-obs').value = orc.Observacoes_Tecnicas || '';
+
+      try {
+        itensAtuais = typeof orc.Itens_JSON === 'string' ? JSON.parse(orc.Itens_JSON) : (orc.Itens_JSON || []);
+      } catch {
+        itensAtuais = [];
+      }
+
+      renderizarItensOrcamento();
+      mudarAba('editor', document.querySelector('nav.tabs button'));
+      mostrarToast(duplicar ? 'Orçamento duplicado para edição.' : `Orçamento ${orc.Numero} carregado.`);
+    }
+
+    // Gerenciar Tabela de Preços
+    function renderizarTabelaAdmin() {
+      const tbody = document.getElementById('tabela-admin-body');
+      tbody.innerHTML = db.servicos.map(s => `
+        <tr>
+          <td>${s.ID}</td>
+          <td>${s.Categoria}</td>
+          <td>${s.Descricao}</td>
+          <td class="td-num"><strong>${formatarMoeda(s.Valor)}</strong></td>
+          <td><button class="btn btn-outline btn-sm" onclick='editarServico(${JSON.stringify(s).replace(/'/g, "&#39;")})'>Editar</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function editarServico(s) {
+      document.getElementById('srv-id').value = s.ID;
+      document.getElementById('srv-cat').value = s.Categoria;
+      document.getElementById('srv-desc').value = s.Descricao;
+      document.getElementById('srv-val').value = s.Valor;
+      document.getElementById('srv-unid').value = s.Unidade || 'Serviço';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function limparFormServico() {
+      document.getElementById('srv-id').value = '';
+      document.getElementById('srv-cat').value = '';
+      document.getElementById('srv-desc').value = '';
+      document.getElementById('srv-val').value = '';
+      document.getElementById('srv-unid').value = 'Serviço';
+    }
+
+    async function salvarServicoNuvem() {
+      const dados = {
+        ID: document.getElementById('srv-id').value.trim(),
+        Categoria: document.getElementById('srv-cat').value.trim() || 'Geral',
+        Descricao: document.getElementById('srv-desc').value.trim(),
+        Valor: Number(document.getElementById('srv-val').value) || 0,
+        Unidade: document.getElementById('srv-unid').value.trim() || 'Serviço',
+        Ativo: 'SIM'
+      };
+      if (!dados.Descricao) return alert('Preencha a descrição do serviço.');
+
+      mostrarToast('Atualizando tabela de preços...');
+      await postAPI({ acao: 'salvar_servico', dados });
+      limparFormServico();
+      await iniciarSessao(idToken);
+    }
+
+    // Clientes Admin
+    function renderizarClientesAdmin() {
+      const tbody = document.getElementById('lista-clientes-body');
+      tbody.innerHTML = db.clientes.map((c, i) => `
+        <tr>
+          <td>${c.ID}</td>
+          <td><strong>${c.Nome_RazaoSocial}</strong></td>
+          <td>${c.CPF_CNPJ || '-'}</td>
+          <td>${c.Telefone || '-'}</td>
+          <td>${c.Instrumento_Padrao || '-'}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="usarClienteParaNovo(${i})">Novo Orçamento</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function usarClienteParaNovo(idx) {
+      novoOrcamento();
+      document.getElementById('select-cliente-rapido').value = idx;
+      preencherClienteSelecionado();
+      mudarAba('editor', document.querySelector('nav.tabs button'));
+    }
+
+    // Gerar PDF A4
+    function gerarPDF() {
+      const { subtotal, desconto, total } = recalcularTotais();
+      const num = document.getElementById('orc-numero').value || 'ORÇAMENTO';
+      const dataRaw = document.getElementById('orc-data').value;
+      const dataBr = dataRaw ? dataRaw.split('-').reverse().join('/') : '';
+
+      document.getElementById('pdf-numero').textContent = num;
+      document.getElementById('pdf-data').textContent = dataBr;
+      document.getElementById('pdf-validade').textContent = (document.getElementById('orc-validade').value || 15) + ' dias';
+      document.getElementById('pdf-prazo').textContent = document.getElementById('orc-prazo').value || 'A combinar';
+
+      document.getElementById('pdf-cli-nome').textContent = document.getElementById('cli-nome').value || '-';
+      document.getElementById('pdf-cli-doc').textContent = document.getElementById('cli-doc').value || '-';
+      document.getElementById('pdf-cli-tel').textContent = document.getElementById('cli-tel').value || '-';
+      document.getElementById('pdf-instrumento').textContent = document.getElementById('orc-instrumento').value || '-';
+
+      document.getElementById('pdf-itens-body').innerHTML = itensAtuais.map((item, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${item.descricao}</td>
+          <td style="text-align:center;">${item.qtd}</td>
+          <td style="text-align:right;">${formatarMoeda(item.valor)}</td>
+          <td style="text-align:right;"><strong>${formatarMoeda(item.qtd * item.valor)}</strong></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('pdf-subtotal').textContent = formatarMoeda(subtotal);
+      document.getElementById('pdf-desconto').textContent = '- ' + formatarMoeda(desconto);
+      document.getElementById('pdf-desconto-row').style.display = desconto > 0 ? 'flex' : 'none';
+      document.getElementById('pdf-total').textContent = formatarMoeda(total);
+
+      const obs = document.getElementById('orc-obs').value.trim();
+      document.getElementById('pdf-obs-box').style.display = obs ? 'block' : 'none';
+      document.getElementById('pdf-obs').textContent = obs;
+
+      const tituloOriginal = document.title;
+      const nomeLimpo = (document.getElementById('cli-nome').value || 'Cliente').replace(/[^a-zA-Z0-9À-ÿ ]/g, '').trim();
+      document.title = `${num} - ${nomeLimpo} - Joseph Medeiros Luthier`;
+
+      window.print();
+      document.title = tituloOriginal;
+    }
+
+    // Enviar resumo formatado no WhatsApp
+    function enviarWhatsApp() {
+      const tel = document.getElementById('cli-tel').value.replace(/\D/g, '');
+      const nome = document.getElementById('cli-nome').value || 'Olá';
+      const inst = document.getElementById('orc-instrumento').value;
+      const num = document.getElementById('orc-numero').value || 'Orçamento';
+      const { total } = recalcularTotais();
+
+      const listaTxt = itensAtuais.map(i => `• ${i.qtd}x ${i.descricao}: ${formatarMoeda(i.qtd * i.valor)}`).join('\n');
+      const msg = `*Joseph Medeiros | Luthier*\n` +
+        `Referência: *${num}*\n` +
+        `Cliente: ${nome}\n` +
+        (inst ? `Instrumento: ${inst}\n\n` : '\n') +
+        `*Serviços orçados:*\n${listaTxt}\n\n` +
+        `*Valor Total: ${formatarMoeda(total)}*`;
+
+      const numeroWa = tel.length >= 10 && !tel.startsWith('55') ? '55' + tel : tel;
+      const url = numeroWa
+        ? `https://wa.me/${numeroWa}?text=${encodeURIComponent(msg)}`
+        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    // Utilitários
+    async function postAPI(payload) {
+      payload.token = idToken;
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.status !== 'ok') throw new Error(json.mensagem || 'Erro na API');
+      return json;
+    }
+
+    function formatarMoeda(val) {
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function mostrarToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+  </script>
+</body>
+</html>
