@@ -30,7 +30,6 @@
       line-height: 1.45;
     }
 
-    /* LOGIN */
     #login-screen {
       min-height: 100vh;
       display: flex;
@@ -53,7 +52,6 @@
     .google-btn-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
     #login-error { color: var(--danger); font-size: 0.85rem; margin-top: 10px; }
 
-    /* APP */
     #app-screen { display: none; min-height: 100vh; }
 
     header.topbar {
@@ -104,7 +102,6 @@
 
     main.container { max-width: 1240px; margin: 24px auto; padding: 0 16px 60px; }
 
-    /* RESUMO KPIs */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -180,10 +177,10 @@
       text-decoration: none;
       transition: 0.15s;
     }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-accent { background: var(--accent); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
     .btn-outline { background: #fff; border: 1px solid #d1d5db; color: var(--text); }
     .btn-outline:hover { background: #f9fafb; }
     .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
@@ -354,7 +351,7 @@
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="salvarProdutoNuvem()">Salvar Produto na Planilha</button>
+          <button class="btn btn-primary" id="btn-salvar-prd" onclick="salvarProdutoNuvem()">Salvar Produto na Planilha</button>
         </div>
 
         <div class="card">
@@ -443,7 +440,7 @@
             <div>Custo Unitário Real (c/ frete e imposto): <strong id="sim-unit" style="color:var(--primary); font-size:1.1rem;">R$ 0,00</strong></div>
           </div>
 
-          <button class="btn btn-primary" onclick="salvarCompraNuvem()">Registrar Compra e Somar ao Estoque</button>
+          <button class="btn btn-primary" id="btn-salvar-cmp" onclick="salvarCompraNuvem()">Registrar Compra e Somar ao Estoque</button>
         </div>
 
         <div class="card">
@@ -497,7 +494,7 @@
             <label>Referência (Ex: Orçamento ORC-2026-004 ou Nome do Cliente)</label>
             <input type="text" id="mov-obs" placeholder="Opcional" />
           </div>
-          <button class="btn btn-primary" onclick="registrarSaidaNuvem()">Confirmar Baixa no Estoque</button>
+          <button class="btn btn-primary" id="btn-salvar-mov" onclick="registrarSaidaNuvem()">Confirmar Baixa no Estoque</button>
         </div>
 
         <div class="card">
@@ -546,7 +543,7 @@
               </select>
             </div>
           </div>
-          <button class="btn btn-accent" onclick="executarReajusteMassa()">Aplicar Reajuste Agora</button>
+          <button class="btn btn-accent" id="btn-reajustar" onclick="executarReajusteMassa()">Aplicar Reajuste Agora</button>
         </div>
       </section>
     </main>
@@ -576,6 +573,9 @@
       mostrarToast('Sincronizando estoque e custos...');
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          throw new Error('Sua sessão Google expirou (1h). Clique em Entrar com o Google novamente.');
+        }
         document.getElementById('user-email').textContent = payload.email;
 
         const res = await fetch(`${APPS_SCRIPT_URL}?modulo=estoque&token=${encodeURIComponent(token)}`);
@@ -613,7 +613,6 @@
     }
 
     function atualizarTela() {
-      // KPIs
       let custoTotal = 0, revendaTotal = 0, alertas = 0;
       db.produtos.forEach(p => {
         const est = Number(p.Estoque_Atual || 0);
@@ -628,7 +627,6 @@
       document.getElementById('kpi-revenda-total').textContent = formatarMoeda(revendaTotal);
       document.getElementById('kpi-alertas').textContent = alertas;
 
-      // Seletores de produtos
       const optsProd = db.produtos.map(p =>
         `<option value="${p.ID}">${p.Nome_Produto} (Saldo: ${p.Estoque_Atual})</option>`
       ).join('');
@@ -637,7 +635,6 @@
       preencherLinkCompraProduto();
       preencherValorSaida();
 
-      // Categorias para reajuste
       const cats = [...new Set(db.produtos.map(p => p.Categoria).filter(Boolean))];
       document.getElementById('rea-cat').innerHTML = '<option value="">Todas as categorias</option>' +
         cats.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -647,7 +644,6 @@
       renderizarMovimentacoes();
     }
 
-    // Cálculo dinâmico no formulário de Produto
     function calcularPrecoPorMargem() {
       const custo = Number(document.getElementById('prd-custo').value) || 0;
       const margem = Number(document.getElementById('prd-margem').value) || 0;
@@ -663,6 +659,7 @@
     }
 
     async function salvarProdutoNuvem() {
+      const btn = document.getElementById('btn-salvar-prd');
       const dados = {
         ID: document.getElementById('prd-id').value.trim(),
         Categoria: document.getElementById('prd-cat').value.trim() || 'Geral',
@@ -678,10 +675,18 @@
       };
       if (!dados.Nome_Produto) return alert('Informe o nome do produto.');
 
-      mostrarToast('Salvando produto...');
-      await postAPI({ acao: 'salvar_produto', dados });
-      limparFormProduto();
-      await iniciarSessao(idToken);
+      btn.disabled = true;
+      mostrarToast('Salvando produto na planilha...');
+      try {
+        await postAPI({ acao: 'salvar_produto', dados });
+        limparFormProduto();
+        await iniciarSessao(idToken);
+        mostrarToast('Produto salvo com sucesso!');
+      } catch (err) {
+        alert('Falha ao salvar produto: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     function editarProduto(p) {
@@ -721,6 +726,11 @@
         return matchTexto;
       });
 
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted);">Nenhum produto encontrado.</td></tr>';
+        return;
+      }
+
       tbody.innerHTML = lista.map(p => {
         const baixo = Number(p.Estoque_Atual) <= Number(p.Estoque_Minimo);
         const dataReaj = String(p.Ultimo_Reajuste || '').split('T')[0];
@@ -751,7 +761,6 @@
       }).join('');
     }
 
-    // Compras e Rateio de Frete
     function preencherLinkCompraProduto() {
       const id = document.getElementById('cmp-produto').value;
       const p = db.produtos.find(x => String(x.ID) === String(id));
@@ -769,6 +778,7 @@
     }
 
     async function salvarCompraNuvem() {
+      const btn = document.getElementById('btn-salvar-cmp');
       const prodId = document.getElementById('cmp-produto').value;
       const prodObj = db.produtos.find(p => String(p.ID) === String(prodId));
       if (!prodObj) return alert('Cadastre e selecione um produto.');
@@ -786,12 +796,20 @@
         Atualizar_Preco_Revenda: document.getElementById('cmp-atualizar-revenda').checked
       };
 
+      btn.disabled = true;
       mostrarToast('Registrando lote e recalculando custo médio...');
-      await postAPI({ acao: 'registrar_compra', dados });
-      document.getElementById('cmp-val-prod').value = '';
-      document.getElementById('cmp-frete').value = 0;
-      document.getElementById('cmp-rastreio').value = '';
-      await iniciarSessao(idToken);
+      try {
+        await postAPI({ acao: 'registrar_compra', dados });
+        document.getElementById('cmp-val-prod').value = '';
+        document.getElementById('cmp-frete').value = 0;
+        document.getElementById('cmp-rastreio').value = '';
+        await iniciarSessao(idToken);
+        mostrarToast('Compra registrada com sucesso!');
+      } catch (err) {
+        alert('Erro ao registrar compra: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     function renderizarCompras() {
@@ -812,7 +830,6 @@
       `).join('');
     }
 
-    // Baixas / Saídas
     function preencherValorSaida() {
       const id = document.getElementById('mov-produto').value;
       const p = db.produtos.find(x => String(x.ID) === String(id));
@@ -820,9 +837,10 @@
     }
 
     async function registrarSaidaNuvem() {
+      const btn = document.getElementById('btn-salvar-mov');
       const prodId = document.getElementById('mov-produto').value;
       const prodObj = db.produtos.find(p => String(p.ID) === String(prodId));
-      if (!prodObj) return;
+      if (!prodObj) return alert('Selecione um produto.');
 
       const dados = {
         Produto_ID: prodId,
@@ -833,10 +851,18 @@
         Referencia_Observacao: document.getElementById('mov-obs').value.trim()
       };
 
+      btn.disabled = true;
       mostrarToast('Registrando saída do estoque...');
-      await postAPI({ acao: 'registrar_saida', dados });
-      document.getElementById('mov-obs').value = '';
-      await iniciarSessao(idToken);
+      try {
+        await postAPI({ acao: 'registrar_saida', dados });
+        document.getElementById('mov-obs').value = '';
+        await iniciarSessao(idToken);
+        mostrarToast('Baixa registrada!');
+      } catch (err) {
+        alert('Erro ao registrar saída: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     function renderizarMovimentacoes() {
@@ -853,30 +879,52 @@
       `).join('');
     }
 
-    // Reajuste Anual
     function alternarCampoPercentual() {
       const modo = document.getElementById('rea-modo').value;
       document.getElementById('box-rea-pct').style.display = (modo === 'percentual') ? 'flex' : 'none';
     }
 
     async function executarReajusteMassa() {
+      const btn = document.getElementById('btn-reajustar');
       const modo = document.getElementById('rea-modo').value;
       const percentual = Number(document.getElementById('rea-pct').value) || 0;
       const categoria = document.getElementById('rea-cat').value;
 
       if (!confirm('Confirma o reajuste dos preços de revenda na planilha?')) return;
 
+      btn.disabled = true;
       mostrarToast('Aplicando reajuste na planilha...');
-      const res = await postAPI({ acao: 'reajustar_precos_massa', dados: { modo, percentual, categoria } });
-      await iniciarSessao(idToken);
-      mostrarToast(`${res.atualizados} produtos reajustados com sucesso!`);
+      try {
+        const res = await postAPI({ acao: 'reajustar_precos_massa', dados: { modo, percentual, categoria } });
+        await iniciarSessao(idToken);
+        mostrarToast(`${res.atualizados} produtos reajustados com sucesso!`);
+      } catch (err) {
+        alert('Erro no reajuste: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     async function postAPI(payload) {
       payload.token = idToken;
-      const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-      const json = await res.json();
-      if (json.status !== 'ok') throw new Error(json.mensagem || 'Erro na API');
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        throw new Error('Resposta inválida do servidor Google. Verifique se a implantação do Apps Script está publicada como Nova Versão.');
+      }
+      if (json.status !== 'ok') {
+        if (String(json.mensagem).includes('expirada') || String(json.mensagem).includes('inválida')) {
+          sair();
+        }
+        throw new Error(json.mensagem || 'Erro na API');
+      }
       return json;
     }
 
@@ -889,7 +937,7 @@
       t.textContent = msg;
       t.style.display = 'block';
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
     }
   </script>
 </body>
