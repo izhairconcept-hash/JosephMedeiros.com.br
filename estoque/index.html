@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Estoque & Precificação | Joseph Medeiros — Luthier</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --surface: #ffffff;
+      --primary: #3b2314;
+      --primary-hover: #52321e;
+      --accent: #b8860b;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    /* LOGIN */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #2b180c 0%, #4a2c18 100%);
+    }
+    .login-card {
+      background: var(--surface);
+      padding: 40px 32px;
+      border-radius: 14px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+    .login-card h1 { font-size: 1.45rem; color: var(--primary); margin-bottom: 6px; }
+    .login-card p { font-size: 0.9rem; color: var(--muted); margin-bottom: 24px; }
+    .google-btn-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+    #login-error { color: var(--danger); font-size: 0.85rem; margin-top: 10px; }
+
+    /* APP */
+    #app-screen { display: none; min-height: 100vh; }
+
+    header.topbar {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .brand { display: flex; flex-direction: column; }
+    .brand strong { font-size: 1.1rem; }
+    .brand span { font-size: 0.78rem; color: #e5d5c3; }
+
+    nav.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    nav.tabs button, nav.tabs a {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    nav.tabs button.active, nav.tabs button:hover, nav.tabs a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .user-actions { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+    .btn-logout {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    main.container { max-width: 1240px; margin: 24px auto; padding: 0 16px 60px; }
+
+    /* RESUMO KPIs */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 800px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-card {
+      background: var(--surface);
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .kpi-card small { color: var(--muted); font-size: 0.78rem; display: block; margin-bottom: 4px; }
+    .kpi-card strong { font-size: 1.35rem; color: var(--primary); }
+    .kpi-card.alert strong { color: var(--danger); }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 760px) { .form-grid, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .field label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid #d1d5db; color: var(--text); }
+    .btn-outline:hover { background: #f9fafb; }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.78rem; }
+    .td-num { text-align: right; white-space: nowrap; }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-baixo { background: #fee2e2; color: #991b1b; }
+
+    .simulador-box {
+      background: #faf8f5;
+      border: 1px solid #e7dfd3;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1f2937;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h1>Estoque & Precificação</h1>
+      <p>Joseph Medeiros | Luthier — Controle de Insumos e Compras</p>
+      <div class="google-btn-wrap">
+        <div id="g_id_onload"
+             data-client_id="504388621271-3s72o1fc0umnkg55qiou43tgqtvaqg3q.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
+      </div>
+      <div id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- PAINEL PRINCIPAL -->
+  <div id="app-screen">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Estoque & Precificação | Luthier</strong>
+        <span>Controle de Compras AliExpress, Custo com Frete e Revenda</span>
+      </div>
+      <nav class="tabs">
+        <button class="active" onclick="mudarAba('estoque', this)">Produtos & Estoque</button>
+        <button onclick="mudarAba('compras', this)">Lançar Compra (Frete/Imposto)</button>
+        <button onclick="mudarAba('saidas', this)">Baixa / Uso na Bancada</button>
+        <button onclick="mudarAba('reajuste', this)">Reajuste Anual</button>
+        <a href="../orcamento/" title="Ir para Orçamentos">↗ Orçamentos</a>
+      </nav>
+      <div class="user-actions">
+        <span id="user-email"></span>
+        <button class="btn-logout" onclick="sair()">Sair</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <small>Itens Cadastrados</small>
+          <strong id="kpi-itens">0</strong>
+        </div>
+        <div class="kpi-card">
+          <small>Capital Imobilizado (Custo)</small>
+          <strong id="kpi-custo-total">R$ 0,00</strong>
+        </div>
+        <div class="kpi-card">
+          <small>Potencial de Revenda</small>
+          <strong id="kpi-revenda-total">R$ 0,00</strong>
+        </div>
+        <div class="kpi-card alert">
+          <small>Alertas de Estoque Baixo</small>
+          <strong id="kpi-alertas">0</strong>
+        </div>
+      </div>
+
+      <!-- ABA 1: ESTOQUE E CADASTRO DE PRODUTOS -->
+      <section id="tab-estoque">
+        <div class="card">
+          <h2>
+            <span>Cadastrar ou Editar Produto / Insumo</span>
+            <button class="btn btn-outline btn-sm" onclick="limparFormProduto()">+ Novo Produto</button>
+          </h2>
+          <div class="form-grid-4">
+            <div class="field">
+              <label>ID</label>
+              <input type="text" id="prd-id" readonly placeholder="Automático" style="background:#f9fafb;" />
+            </div>
+            <div class="field">
+              <label>Categoria</label>
+              <input type="text" id="prd-cat" placeholder="Ex: Cordas, Cavaletes, Crina, Ferramentas" />
+            </div>
+            <div class="field">
+              <label>Nome do Produto / Insumo *</label>
+              <input type="text" id="prd-nome" placeholder="Ex: Jogo Cordas Pirastro Tonica 4/4" />
+            </div>
+            <div class="field">
+              <label>Fornecedor Principal</label>
+              <input type="text" id="prd-forn" value="AliExpress" />
+            </div>
+          </div>
+
+          <div class="form-grid-4">
+            <div class="field">
+              <label>Estoque Atual</label>
+              <input type="number" id="prd-est" value="0" />
+            </div>
+            <div class="field">
+              <label>Estoque Mínimo (Alerta)</label>
+              <input type="number" id="prd-min" value="2" />
+            </div>
+            <div class="field">
+              <label>Custo Unit. Real c/ Frete (R$)</label>
+              <input type="number" id="prd-custo" step="0.01" placeholder="0.00" oninput="calcularPrecoPorMargem()" />
+            </div>
+            <div class="field">
+              <label>Margem de Lucro (%)</label>
+              <input type="number" id="prd-margem" value="100" step="1" oninput="calcularPrecoPorMargem()" />
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Preço Final de Revenda (R$)</label>
+              <input type="number" id="prd-preco" step="0.01" placeholder="Calculado ou manual" oninput="recalcularMargemPorPreco()" />
+            </div>
+            <div class="field">
+              <label>Link Direto de Compra (AliExpress / Loja)</label>
+              <input type="url" id="prd-link" placeholder="https://pt.aliexpress.com/item/..." />
+            </div>
+            <div class="field">
+              <label>Observações</label>
+              <input type="text" id="prd-obs" placeholder="Ex: Vendedor confiável, prazo 15 dias" />
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="salvarProdutoNuvem()">Salvar Produto na Planilha</button>
+        </div>
+
+        <div class="card">
+          <h2>
+            <span>Inventário, Custos Reais e Links de Reposição</span>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <select id="filtro-status-est" style="width:auto;" onchange="renderizarProdutos()">
+                <option value="">Todos os itens</option>
+                <option value="baixo">Apenas Estoque Baixo</option>
+              </select>
+              <input type="text" id="busca-produto" placeholder="Buscar produto..." style="width:220px;" oninput="renderizarProdutos()" />
+            </div>
+          </h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Saldo / Mín</th>
+                  <th class="td-num">Custo Real</th>
+                  <th class="td-num">Margem</th>
+                  <th class="td-num">Revenda</th>
+                  <th>Reajuste</th>
+                  <th>Ações & Link</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-produtos-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 2: LANÇAR COMPRA COM RATEIO DE FRETE E IMPOSTOS -->
+      <section id="tab-compras" style="display:none;">
+        <div class="card">
+          <h2>Registrar Compra (AliExpress / Fornecedor) com Rateio de Frete e Imposto</h2>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Selecione o Produto Cadastrado *</label>
+              <select id="cmp-produto" onchange="preencherLinkCompraProduto()"></select>
+            </div>
+            <div class="field">
+              <label>Data da Compra</label>
+              <input type="date" id="cmp-data" />
+            </div>
+            <div class="field">
+              <label>Fornecedor / Loja</label>
+              <input type="text" id="cmp-forn" value="AliExpress" />
+            </div>
+          </div>
+
+          <div class="form-grid-4">
+            <div class="field">
+              <label>Quantidade Comprada *</label>
+              <input type="number" id="cmp-qtd" value="1" min="1" oninput="simularCustoCompra()" />
+            </div>
+            <div class="field">
+              <label>Valor Pago nos Produtos (R$) *</label>
+              <input type="number" id="cmp-val-prod" step="0.01" placeholder="Ex: 120.00" oninput="simularCustoCompra()" />
+            </div>
+            <div class="field">
+              <label>Frete + Impostos Remessa (R$)</label>
+              <input type="number" id="cmp-frete" step="0.01" value="0" placeholder="Ex: 48.50" oninput="simularCustoCompra()" />
+            </div>
+            <div class="field">
+              <label>Nº Pedido / Rastreio</label>
+              <input type="text" id="cmp-rastreio" placeholder="Ex: NM123456789BR" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>Link do Anúncio (atualiza o link do produto se preenchido)</label>
+              <input type="url" id="cmp-link" placeholder="https://pt.aliexpress.com/item/..." />
+            </div>
+            <div class="field" style="justify-content:center;">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:18px;">
+                <input type="checkbox" id="cmp-atualizar-revenda" checked style="width:auto;" />
+                Recalcular automaticamente o Preço de Revenda com base na margem do produto
+              </label>
+            </div>
+          </div>
+
+          <div class="simulador-box">
+            <div>Total do Pedido: <strong id="sim-total">R$ 0,00</strong></div>
+            <div>Custo Unitário Real (c/ frete e imposto): <strong id="sim-unit" style="color:var(--primary); font-size:1.1rem;">R$ 0,00</strong></div>
+          </div>
+
+          <button class="btn btn-primary" onclick="salvarCompraNuvem()">Registrar Compra e Somar ao Estoque</button>
+        </div>
+
+        <div class="card">
+          <h2>Histórico de Compras e Lotes Importados</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Produto</th>
+                  <th>Qtd</th>
+                  <th class="td-num">Produtos</th>
+                  <th class="td-num">Frete/Imp.</th>
+                  <th class="td-num">Custo Unit. Real</th>
+                  <th>Pedido / Link</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-compras-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 3: BAIXA / USO NA BANCADA -->
+      <section id="tab-saidas" style="display:none;">
+        <div class="card">
+          <h2>Dar Baixa no Estoque (Uso em Serviço ou Venda Avulsa)</h2>
+          <div class="form-grid-4">
+            <div class="field">
+              <label>Produto *</label>
+              <select id="mov-produto" onchange="preencherValorSaida()"></select>
+            </div>
+            <div class="field">
+              <label>Tipo de Saída</label>
+              <select id="mov-tipo">
+                <option value="Uso Bancada">Uso em Manutenção / Bancada</option>
+                <option value="Venda Direta">Venda Direta ao Músico</option>
+                <option value="Perda / Ajuste">Ajuste de Inventário / Perda</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Quantidade *</label>
+              <input type="number" id="mov-qtd" value="1" min="1" />
+            </div>
+            <div class="field">
+              <label>Valor Unitário (R$)</label>
+              <input type="number" id="mov-val" step="0.01" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Referência (Ex: Orçamento ORC-2026-004 ou Nome do Cliente)</label>
+            <input type="text" id="mov-obs" placeholder="Opcional" />
+          </div>
+          <button class="btn btn-primary" onclick="registrarSaidaNuvem()">Confirmar Baixa no Estoque</button>
+        </div>
+
+        <div class="card">
+          <h2>Últimas Movimentações de Saída</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Tipo</th>
+                  <th>Produto</th>
+                  <th>Qtd</th>
+                  <th class="td-num">Total</th>
+                  <th>Referência</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-mov-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 4: REAJUSTE ANUAL DE PREÇOS -->
+      <section id="tab-reajuste" style="display:none;">
+        <div class="card">
+          <h2>Reajuste Anual de Preços de Revenda em Massa</h2>
+          <p style="color:var(--muted); font-size:0.9rem; margin-bottom:16px;">
+            Atualize todos os seus preços de revenda de uma vez para acompanhar câmbio, inflação ou reajustar com base nos novos custos médios de importação.
+          </p>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Modo de Reajuste</label>
+              <select id="rea-modo" onchange="alternarCampoPercentual()">
+                <option value="percentual">Aplicar Percentual (%) sobre Preço Atual</option>
+                <option value="margem">Recalcular todos pela Margem (%) sobre o Custo</option>
+              </select>
+            </div>
+            <div class="field" id="box-rea-pct">
+              <label>Percentual de Aumento (%)</label>
+              <input type="number" id="rea-pct" value="8" step="0.5" placeholder="Ex: 8 ou 10" />
+            </div>
+            <div class="field">
+              <label>Filtrar Categoria (ou Todas)</label>
+              <select id="rea-cat">
+                <option value="">Todas as categorias</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-accent" onclick="executarReajusteMassa()">Aplicar Reajuste Agora</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyg_HjJBWydlMXFVbSXuFgl2Zhq0Bus2IwXZ2ge_59HovU73X0i3Di4LO5TyR-QE8T-eg/exec';
+    const GOOGLE_CLIENT_ID = '504388621271-3s72o1fc0umnkg55qiou43tgqtvaqg3q.apps.googleusercontent.com';
+
+    let idToken = localStorage.getItem('jm_luthier_token') || '';
+    let db = { produtos: [], compras: [], movimentacoes: [] };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('cmp-data').value = new Date().toISOString().split('T')[0];
+      if (idToken) iniciarSessao(idToken);
+    });
+
+    function handleCredentialResponse(response) {
+      idToken = response.credential;
+      localStorage.setItem('jm_luthier_token', idToken);
+      iniciarSessao(idToken);
+    }
+
+    async function iniciarSessao(token) {
+      mostrarToast('Sincronizando estoque e custos...');
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        document.getElementById('user-email').textContent = payload.email;
+
+        const res = await fetch(`${APPS_SCRIPT_URL}?modulo=estoque&token=${encodeURIComponent(token)}`);
+        const json = await res.json();
+        if (json.status !== 'ok') throw new Error(json.mensagem || 'Erro de autenticação.');
+
+        db.produtos = json.produtos || [];
+        db.compras = json.compras || [];
+        db.movimentacoes = json.movimentacoes || [];
+
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'block';
+
+        atualizarTela();
+        mostrarToast('Estoque atualizado!');
+      } catch (err) {
+        localStorage.removeItem('jm_luthier_token');
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-error').textContent = err.message;
+      }
+    }
+
+    function sair() {
+      localStorage.removeItem('jm_luthier_token');
+      location.reload();
+    }
+
+    function mudarAba(nome, btn) {
+      ['estoque', 'compras', 'saidas', 'reajuste'].forEach(t => {
+        document.getElementById('tab-' + t).style.display = (t === nome) ? 'block' : 'none';
+      });
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function atualizarTela() {
+      // KPIs
+      let custoTotal = 0, revendaTotal = 0, alertas = 0;
+      db.produtos.forEach(p => {
+        const est = Number(p.Estoque_Atual || 0);
+        const min = Number(p.Estoque_Minimo || 0);
+        custoTotal += est * Number(p.Custo_Unitario_Real || 0);
+        revendaTotal += est * Number(p.Preco_Revenda || 0);
+        if (est <= min) alertas++;
+      });
+
+      document.getElementById('kpi-itens').textContent = db.produtos.length;
+      document.getElementById('kpi-custo-total').textContent = formatarMoeda(custoTotal);
+      document.getElementById('kpi-revenda-total').textContent = formatarMoeda(revendaTotal);
+      document.getElementById('kpi-alertas').textContent = alertas;
+
+      // Seletores de produtos
+      const optsProd = db.produtos.map(p =>
+        `<option value="${p.ID}">${p.Nome_Produto} (Saldo: ${p.Estoque_Atual})</option>`
+      ).join('');
+      document.getElementById('cmp-produto').innerHTML = optsProd;
+      document.getElementById('mov-produto').innerHTML = optsProd;
+      preencherLinkCompraProduto();
+      preencherValorSaida();
+
+      // Categorias para reajuste
+      const cats = [...new Set(db.produtos.map(p => p.Categoria).filter(Boolean))];
+      document.getElementById('rea-cat').innerHTML = '<option value="">Todas as categorias</option>' +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+
+      renderizarProdutos();
+      renderizarCompras();
+      renderizarMovimentacoes();
+    }
+
+    // Cálculo dinâmico no formulário de Produto
+    function calcularPrecoPorMargem() {
+      const custo = Number(document.getElementById('prd-custo').value) || 0;
+      const margem = Number(document.getElementById('prd-margem').value) || 0;
+      document.getElementById('prd-preco').value = (custo * (1 + margem / 100)).toFixed(2);
+    }
+
+    function recalcularMargemPorPreco() {
+      const custo = Number(document.getElementById('prd-custo').value) || 0;
+      const preco = Number(document.getElementById('prd-preco').value) || 0;
+      if (custo > 0) {
+        document.getElementById('prd-margem').value = (((preco - custo) / custo) * 100).toFixed(1);
+      }
+    }
+
+    async function salvarProdutoNuvem() {
+      const dados = {
+        ID: document.getElementById('prd-id').value.trim(),
+        Categoria: document.getElementById('prd-cat').value.trim() || 'Geral',
+        Nome_Produto: document.getElementById('prd-nome').value.trim(),
+        Fornecedor_Principal: document.getElementById('prd-forn').value.trim() || 'AliExpress',
+        Estoque_Atual: Number(document.getElementById('prd-est').value) || 0,
+        Estoque_Minimo: Number(document.getElementById('prd-min').value) || 1,
+        Custo_Unitario_Real: Number(document.getElementById('prd-custo').value) || 0,
+        Margem_Lucro_Pct: Number(document.getElementById('prd-margem').value) || 0,
+        Preco_Revenda: Number(document.getElementById('prd-preco').value) || 0,
+        Link_Compra: document.getElementById('prd-link').value.trim(),
+        Observacoes: document.getElementById('prd-obs').value.trim()
+      };
+      if (!dados.Nome_Produto) return alert('Informe o nome do produto.');
+
+      mostrarToast('Salvando produto...');
+      await postAPI({ acao: 'salvar_produto', dados });
+      limparFormProduto();
+      await iniciarSessao(idToken);
+    }
+
+    function editarProduto(p) {
+      document.getElementById('prd-id').value = p.ID;
+      document.getElementById('prd-cat').value = p.Categoria;
+      document.getElementById('prd-nome').value = p.Nome_Produto;
+      document.getElementById('prd-forn').value = p.Fornecedor_Principal || 'AliExpress';
+      document.getElementById('prd-est').value = p.Estoque_Atual;
+      document.getElementById('prd-min').value = p.Estoque_Minimo;
+      document.getElementById('prd-custo').value = p.Custo_Unitario_Real;
+      document.getElementById('prd-margem').value = p.Margem_Lucro_Pct;
+      document.getElementById('prd-preco').value = p.Preco_Revenda;
+      document.getElementById('prd-link').value = p.Link_Compra || '';
+      document.getElementById('prd-obs').value = p.Observacoes || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function limparFormProduto() {
+      ['prd-id', 'prd-cat', 'prd-nome', 'prd-custo', 'prd-preco', 'prd-link', 'prd-obs'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('prd-forn').value = 'AliExpress';
+      document.getElementById('prd-est').value = 0;
+      document.getElementById('prd-min').value = 2;
+      document.getElementById('prd-margem').value = 100;
+    }
+
+    function renderizarProdutos() {
+      const busca = document.getElementById('busca-produto').value.toLowerCase();
+      const filtroStatus = document.getElementById('filtro-status-est').value;
+      const tbody = document.getElementById('tabela-produtos-body');
+
+      const lista = db.produtos.filter(p => {
+        const matchTexto = String(p.Nome_Produto).toLowerCase().includes(busca) || String(p.Categoria).toLowerCase().includes(busca);
+        const baixo = Number(p.Estoque_Atual) <= Number(p.Estoque_Minimo);
+        if (filtroStatus === 'baixo' && !baixo) return false;
+        return matchTexto;
+      });
+
+      tbody.innerHTML = lista.map(p => {
+        const baixo = Number(p.Estoque_Atual) <= Number(p.Estoque_Minimo);
+        const dataReaj = String(p.Ultimo_Reajuste || '').split('T')[0];
+        const linkBtn = p.Link_Compra
+          ? `<a href="${p.Link_Compra}" target="_blank" class="btn btn-accent btn-sm">Comprar ↗</a>`
+          : '';
+        return `
+          <tr>
+            <td>
+              <strong>${p.Nome_Produto}</strong><br>
+              <small style="color:var(--muted);">${p.Categoria} • ${p.Fornecedor_Principal}</small>
+            </td>
+            <td>
+              <span class="badge ${baixo ? 'badge-baixo' : 'badge-ok'}">
+                ${p.Estoque_Atual} un (mín: ${p.Estoque_Minimo})
+              </span>
+            </td>
+            <td class="td-num">${formatarMoeda(p.Custo_Unitario_Real)}</td>
+            <td class="td-num">${p.Margem_Lucro_Pct}%</td>
+            <td class="td-num"><strong style="color:var(--primary);">${formatarMoeda(p.Preco_Revenda)}</strong></td>
+            <td><small>${dataReaj}</small></td>
+            <td style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick='editarProduto(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Editar</button>
+              ${linkBtn}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Compras e Rateio de Frete
+    function preencherLinkCompraProduto() {
+      const id = document.getElementById('cmp-produto').value;
+      const p = db.produtos.find(x => String(x.ID) === String(id));
+      if (p) document.getElementById('cmp-link').value = p.Link_Compra || '';
+    }
+
+    function simularCustoCompra() {
+      const qtd = Number(document.getElementById('cmp-qtd').value) || 1;
+      const valProd = Number(document.getElementById('cmp-val-prod').value) || 0;
+      const frete = Number(document.getElementById('cmp-frete').value) || 0;
+      const total = valProd + frete;
+      const unit = qtd > 0 ? total / qtd : 0;
+      document.getElementById('sim-total').textContent = formatarMoeda(total);
+      document.getElementById('sim-unit').textContent = formatarMoeda(unit);
+    }
+
+    async function salvarCompraNuvem() {
+      const prodId = document.getElementById('cmp-produto').value;
+      const prodObj = db.produtos.find(p => String(p.ID) === String(prodId));
+      if (!prodObj) return alert('Cadastre e selecione um produto.');
+
+      const dados = {
+        Produto_ID: prodId,
+        Produto_Nome: prodObj.Nome_Produto,
+        Data_Compra: document.getElementById('cmp-data').value,
+        Fornecedor: document.getElementById('cmp-forn').value.trim() || 'AliExpress',
+        Quantidade: Number(document.getElementById('cmp-qtd').value) || 1,
+        Valor_Produtos_Lote: Number(document.getElementById('cmp-val-prod').value) || 0,
+        Frete_Impostos_Total: Number(document.getElementById('cmp-frete').value) || 0,
+        Codigo_Pedido_Rastreio: document.getElementById('cmp-rastreio').value.trim(),
+        Link_Anuncio: document.getElementById('cmp-link').value.trim(),
+        Atualizar_Preco_Revenda: document.getElementById('cmp-atualizar-revenda').checked
+      };
+
+      mostrarToast('Registrando lote e recalculando custo médio...');
+      await postAPI({ acao: 'registrar_compra', dados });
+      document.getElementById('cmp-val-prod').value = '';
+      document.getElementById('cmp-frete').value = 0;
+      document.getElementById('cmp-rastreio').value = '';
+      await iniciarSessao(idToken);
+    }
+
+    function renderizarCompras() {
+      const tbody = document.getElementById('tabela-compras-body');
+      tbody.innerHTML = [...db.compras].reverse().map(c => `
+        <tr>
+          <td>${String(c.Data_Compra).split('T')[0]}</td>
+          <td><strong>${c.Produto_Nome}</strong><br><small>${c.Fornecedor}</small></td>
+          <td>${c.Quantidade}</td>
+          <td class="td-num">${formatarMoeda(c.Valor_Produtos_Lote)}</td>
+          <td class="td-num">${formatarMoeda(c.Frete_Impostos_Total)}</td>
+          <td class="td-num"><strong>${formatarMoeda(c.Custo_Unitario_Calculado)}</strong></td>
+          <td>
+            ${c.Codigo_Pedido_Rastreio || '-'}
+            ${c.Link_Anuncio ? `<br><a href="${c.Link_Anuncio}" target="_blank" style="font-size:0.78rem;">Ver anúncio ↗</a>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Baixas / Saídas
+    function preencherValorSaida() {
+      const id = document.getElementById('mov-produto').value;
+      const p = db.produtos.find(x => String(x.ID) === String(id));
+      if (p) document.getElementById('mov-val').value = p.Preco_Revenda || p.Custo_Unitario_Real || 0;
+    }
+
+    async function registrarSaidaNuvem() {
+      const prodId = document.getElementById('mov-produto').value;
+      const prodObj = db.produtos.find(p => String(p.ID) === String(prodId));
+      if (!prodObj) return;
+
+      const dados = {
+        Produto_ID: prodId,
+        Produto_Nome: prodObj.Nome_Produto,
+        Tipo: document.getElementById('mov-tipo').value,
+        Quantidade: Number(document.getElementById('mov-qtd').value) || 1,
+        Valor_Unitario: Number(document.getElementById('mov-val').value) || 0,
+        Referencia_Observacao: document.getElementById('mov-obs').value.trim()
+      };
+
+      mostrarToast('Registrando saída do estoque...');
+      await postAPI({ acao: 'registrar_saida', dados });
+      document.getElementById('mov-obs').value = '';
+      await iniciarSessao(idToken);
+    }
+
+    function renderizarMovimentacoes() {
+      const tbody = document.getElementById('tabela-mov-body');
+      tbody.innerHTML = [...db.movimentacoes].reverse().map(m => `
+        <tr>
+          <td>${String(m.Data).split('T')[0]}</td>
+          <td>${m.Tipo}</td>
+          <td><strong>${m.Produto_Nome}</strong></td>
+          <td>${m.Quantidade}</td>
+          <td class="td-num">${formatarMoeda(m.Valor_Total)}</td>
+          <td>${m.Referencia_Observacao || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Reajuste Anual
+    function alternarCampoPercentual() {
+      const modo = document.getElementById('rea-modo').value;
+      document.getElementById('box-rea-pct').style.display = (modo === 'percentual') ? 'flex' : 'none';
+    }
+
+    async function executarReajusteMassa() {
+      const modo = document.getElementById('rea-modo').value;
+      const percentual = Number(document.getElementById('rea-pct').value) || 0;
+      const categoria = document.getElementById('rea-cat').value;
+
+      if (!confirm('Confirma o reajuste dos preços de revenda na planilha?')) return;
+
+      mostrarToast('Aplicando reajuste na planilha...');
+      const res = await postAPI({ acao: 'reajustar_precos_massa', dados: { modo, percentual, categoria } });
+      await iniciarSessao(idToken);
+      mostrarToast(`${res.atualizados} produtos reajustados com sucesso!`);
+    }
+
+    async function postAPI(payload) {
+      payload.token = idToken;
+      const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const json = await res.json();
+      if (json.status !== 'ok') throw new Error(json.mensagem || 'Erro na API');
+      return json;
+    }
+
+    function formatarMoeda(val) {
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function mostrarToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+  </script>
+</body>
+</html>
